@@ -20,3 +20,15 @@ impl<'re> Builder<'re> {
         self
     }
 }
+
+pub struct LibEngine {
+    pub engine: rhai::Engine,
+}
+
+impl LibEngine {
+    pub fn new() -> Self {
+        Self {
+            engine: rhai::Engine::new(),
+        }
+    }
+}

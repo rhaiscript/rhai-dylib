@@ -29,13 +29,13 @@ fn main() {
 
     let plugin = constructor();
 
-    let mut engine = rhai::Engine::new();
+    let mut loader = plugin_trait::LibEngine::new();
 
     // Register the plugin's module into the engine.
-    plugin.register(plugin_trait::Builder::new(&mut engine));
+    plugin.register(plugin_trait::Builder::new(&mut loader.engine));
 
     // checking if the module has been registered.
-    println!("{:#?}", engine.gen_fn_signatures(false));
+    println!("{:#?}", loader.engine.gen_fn_signatures(false));
 
-    engine.run("no_params();").unwrap();
+    loader.engine.run("with_params(#{});").unwrap();
 }

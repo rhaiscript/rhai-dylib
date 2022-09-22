@@ -11,7 +11,8 @@ crate-type = ["dylib"]
 [dependencies]
 plugin-trait = { version = "*", path = "../plugin-trait" }
 
-rhai = { version = "1.10.0", features = [
+smartstring = { version = "1" }
+rhai = { version = "1.10.0", default-features = false, features = [
     "unchecked",
     "sync",
     "internals",
