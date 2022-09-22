@@ -1,0 +1,17 @@
+[package]
+name = "main"
+version = "0.1.0"
+edition = "2021"
+
+rust-version = "1.62.1"
+
+[dependencies]
+plugin-trait = { version = "*", path = "../plugin-trait" }
+libloading = "0.7.3"
+rhai = { version = "1.10.0", features = [
+    "unchecked",
+    "sync",
+    "internals",
+    "no_closure",
+    "metadata",
+] }

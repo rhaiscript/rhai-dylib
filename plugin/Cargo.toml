@@ -1,0 +1,20 @@
+[package]
+name = "plugin"
+version = "0.1.0"
+edition = "2021"
+
+rust-version = "1.62.1"
+
+[lib]
+crate-type = ["dylib"]
+
+[dependencies]
+plugin-trait = { version = "*", path = "../plugin-trait" }
+
+rhai = { version = "1.10.0", features = [
+    "unchecked",
+    "sync",
+    "internals",
+    "no_closure",
+    "metadata",
+] }

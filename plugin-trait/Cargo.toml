@@ -1,0 +1,15 @@
+[package]
+name = "plugin-trait"
+version = "0.1.0"
+edition = "2021"
+
+rust-version = "1.62.1"
+
+[dependencies]
+rhai = { version = "1.10.0", features = [
+    "unchecked",
+    "sync",
+    "internals",
+    "no_closure",
+    "metadata",
+] }
