@@ -31,6 +31,7 @@ fn main() {
 
     let mut engine = rhai::Engine::new();
 
+    // Register the plugin's module into the engine.
     plugin.register(plugin_trait::Builder::new(&mut engine));
 
     // checking if the module has been registered.
