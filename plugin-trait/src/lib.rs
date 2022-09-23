@@ -16,7 +16,6 @@ impl<'re> Builder<'re> {
     /// Add a module to the rhai context of vSMTP.
     pub fn register_global_module(&mut self, module: rhai::Module) -> &mut Self {
         self.engine.register_global_module(module.into());
-
         self
     }
 }

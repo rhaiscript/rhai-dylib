@@ -7,10 +7,4 @@ rust-version = "1.62.1"
 
 [dependencies]
 smartstring = { version = "1" }
-rhai = { version = "1.10.0", default-features = false, features = [
-    "unchecked",
-    "sync",
-    "internals",
-    "no_closure",
-    "metadata",
-] }
+rhai = { version = "1.10.0", default-features = false, features = ["unchecked","sync","internals","no_closure","metadata"] }
