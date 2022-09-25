@@ -6,8 +6,10 @@ edition = "2021"
 rust-version = "1.62.1"
 
 [dependencies]
+libloading = "0.7.3"
+
 smartstring = { version = "1" }
-rhai = { version = "1.10.0", default-features = false, features = [
+rhai = { version = "1.10.1", default-features = false, features = [
     "unchecked",
     "sync",
     "internals",

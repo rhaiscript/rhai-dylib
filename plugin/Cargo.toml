@@ -12,7 +12,7 @@ crate-type = ["dylib"]
 plugin-trait = { version = "*", path = "../plugin-trait" }
 
 smartstring = { version = "1" }
-rhai = { version = "1.10.0", default-features = false, features = [
+rhai = { version = "1.10.1", default-features = false, features = [
     "unchecked",
     "sync",
     "internals",

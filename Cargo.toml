@@ -1,2 +1,2 @@
 [workspace]
-members = ["main", "plugin", "plugin-trait"]
+members = ["main", "plugin-trait", "plugin"]
