@@ -1,0 +1,2 @@
+[env]
+RHAI_AHASH_SEED = "[1, 2, 3, 4]"

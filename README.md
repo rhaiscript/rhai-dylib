@@ -14,3 +14,5 @@ This crate exposes a way to create dynamic libraries with Rhai as an API.
 - [ ] Configure libloading for multiple targets.
 - [ ] Lock plugin loaders behind features.
 - [ ] Create macros that generate entry points.
+- [ ] Add TypeID pitfall and ahash specification.
+- [ ] Update seeds for ahash.
