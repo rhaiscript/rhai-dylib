@@ -3,19 +3,9 @@ name = "plugin"
 version = "0.1.0"
 edition = "2021"
 
-rust-version = "1.62.1"
-
+# To use the "dylib" loader, you must create a rust dynamic library crate.
 [lib]
 crate-type = ["dylib"]
 
 [dependencies]
-plugin-trait = { version = "*", path = "../plugin-trait" }
-
-smartstring = { version = "1" }
-rhai = { version = "1.10.1", default-features = false, features = [
-    "unchecked",
-    "sync",
-    "internals",
-    "no_closure",
-    "metadata",
-] }
+rhai-native-plugins = { version = "0.1.0", path = "../../" }

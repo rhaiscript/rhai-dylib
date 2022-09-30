@@ -10,7 +10,5 @@ impl plugin_trait::Plugin for MyPlugin {
 
 #[no_mangle]
 pub fn plugin_entrypoint() -> Box<dyn plugin_trait::Plugin> {
-    println!("plugin: {:?}", std::any::TypeId::of::<rhai::Map>());
-
     Box::new(MyPlugin {})
 }
