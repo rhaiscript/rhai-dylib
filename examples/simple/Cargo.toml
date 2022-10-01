@@ -1,0 +1,9 @@
+[package]
+name = "simple"
+version = "0.1.0"
+edition = "2021"
+
+build = "build.rs"
+
+[dependencies]
+rhai-dylib = { version = "0.1.0", path = "../../" }
