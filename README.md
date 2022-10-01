@@ -1,6 +1,6 @@
 # Rhai Native plugins
 
-This crate exposes a simple API to create "plugins" native rust modules and functions to register in a Rhai engine.
+This crate exposes a simple API to create "plugins" using native rust modules and functions to register in a Rhai engine.
 Plugins can only be loaded in the form of dynamic libraries for now.
 
 > 🚧 This is a work in progress, the API is subject to change. Please do make recommendations on what you want it to be via issues, discussions or pull requests !
