@@ -4,4 +4,4 @@ pub mod plugin;
 pub mod plugin_loader;
 
 /// Re-exporting rhai to prevent version mismatch.
-pub use rhai::*;
+pub use rhai;

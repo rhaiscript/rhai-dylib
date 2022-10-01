@@ -1,5 +1,5 @@
 [package]
-name = "rhai-native-plugins"
+name = "rhai-dylib"
 version = "0.1.0"
 rust-version = "1.64.0"
 edition = "2021"
@@ -22,7 +22,7 @@ keywords = [
 
 [dependencies]
 libloading = "0.7.3"
-rhai = "1.10.1"
 
-[[example]]
-name = "simple"
+# NOTE: Using schungx fork for the RHAI_AHASH_SEED env variable feature.
+#       See https://discord.com/channels/767611025456889857/1023946887516131478/1024174374804262963
+rhai = { version = "1.10.1", git = "https://github.com/schungx/rhai" }

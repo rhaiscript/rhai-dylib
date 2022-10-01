@@ -1,4 +1,4 @@
-use crate::plugin::{Builder, Plugin, PluginConstructor, PLUGIN_ENTRYPOINT};
+use crate::plugin::{Plugin, PluginConstructor, PLUGIN_ENTRYPOINT};
 
 use super::{PluginLoader, PluginLoaderError};
 
@@ -30,24 +30,28 @@ impl PluginLoader for Libloading {
     /// Load a plugin from a dynamic library.
     fn load<'a>(
         &'a mut self,
-        path: &'_ std::path::Path,
+        path: impl AsRef<std::path::Path>,
     ) -> Result<&'a Box<dyn Plugin>, PluginLoaderError> {
         let library = unsafe {
             // TODO: add Macos support. (and other platforms ?)
             if cfg!(linux) {
                 // Workaround for a crash on library unloading on linux: https://github.com/nagisa/rust_libloading/issues/5#issuecomment-244195096
                 libloading::os::unix::Library::open(
-                    Some(path),
+                    Some(path.as_ref()),
                     // Load library with `RTLD_NOW | RTLD_NODELETE` to fix SIGSEGV.
                     0x2 | 0x1000,
                 )
                 .map(|library| libloading::Library::from(library))
             } else {
-                libloading::Library::new(path)
+                libloading::Library::new(path.as_ref())
             }
         }
         .map_err(|error| {
-            PluginLoaderError::Loading(format!("failed to load library at {path:?}: {error}"))
+            PluginLoaderError::Loading(format!(
+                "failed to load library at {:?}: {}",
+                path.as_ref(),
+                error
+            ))
         })?;
 
         self.libraries.push(library);
@@ -64,10 +68,10 @@ impl PluginLoader for Libloading {
     }
 
     /// Apply all plugins loaded in memory to a rhai engine.
-    fn apply(&mut self, engine: &mut rhai::Engine) -> Result<(), super::PluginLoaderError> {
-        for plugin in &self.plugins {
-            plugin.register(Builder::new(engine));
-        }
+    fn apply(&self, engine: &mut rhai::Engine) -> Result<(), super::PluginLoaderError> {
+        self.plugins
+            .iter()
+            .for_each(|plugin| plugin.register(engine));
 
         Ok(())
     }
