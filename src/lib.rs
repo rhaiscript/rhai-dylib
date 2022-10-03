@@ -1,9 +1,10 @@
-//! # rhai-dylib - Load native Rust plugins using dynamic libraries !
+//! # rhai-dylib
 //!
-//! This crate is a really simple implementation of a dynamic library loader for Rhai.
-//! It provides traits to create plugins and plugin loaders.
+//! This crate provides ways to create dynamic library crates and load them in a rhai engine at runtime.
+//! It does it by exposing traits to create plugins and plugin loaders.
 //!
 //! Check out the "simple" example to get started.
+//! Check out the [`plugin`] and [`plugin_loader`] modules to implement your own plugins and loaders.
 
 #![deny(missing_docs)]
 #![warn(clippy::all)]
