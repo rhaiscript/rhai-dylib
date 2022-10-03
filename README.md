@@ -18,6 +18,7 @@ Plugins can only be loaded in the form of dynamic libraries for now.
 There are multiple limitations with this implementation.
 
 > TL;DR
+> To use this crate, you need to:
 > - Compile **EVERYTHING**, plugins and program that will load them, using the **SAME** rust version.
 > - Compile **EVERYTHING**, plugins and program that will load them, inside the **SAME** workspace or **WITHOUT** a workspace.
 > - Export the `RHAI_AHASH_SEED` environment variable with the **SAME** four u64 array (i.e. `RHAI_AHASH_SEED="[1, 2, 3, 4]"`) when building your plugins and the program that will load them.
@@ -59,6 +60,18 @@ export RHAI_AHASH_SEED="[1, 2, 3, 4]" # The seed is now fixed and won't change b
 cargo build --manifest-path ./my_program/Cargo.toml
 cargo build --manifest-path ./my_plugin/Cargo.toml
 ```
+
+instead of exporting the variable like above, you can use a [cargo config](https://doc.rust-lang.org/cargo/reference/config.html) file.
+
+```toml
+# .cargo/config.toml
+[env]
+# Replace the seed to your own liking, it must be the same for every plugins.
+RHAI_AHASH_SEED = "[1, 2, 3, 4]"
+```
+
+Beware: the code handling the `RHAI_AHASH_SEED` environment variable is not yet merged into the main branch of Rhai.
+This crate uses a personal fork of [schungx](https://github.com/schungx/rhai) for the time being.
 
 ## TODO
 
