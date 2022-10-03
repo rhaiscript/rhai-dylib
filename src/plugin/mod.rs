@@ -50,7 +50,5 @@ pub trait Plugin {
     ///     }
     /// }
     /// ```
-    ///
-    ///
     fn register(&self, engine: &mut rhai::Engine);
 }

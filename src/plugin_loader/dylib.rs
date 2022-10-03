@@ -3,6 +3,29 @@ use crate::plugin::{Plugin, PluginConstructor, PLUGIN_ENTRYPOINT};
 use super::{PluginLoader, PluginLoaderError};
 
 /// Loading dynamic libraries using the [`libloading`](https://github.com/nagisa/rust_libloading) crate.
+///
+/// # Example
+///
+/// ```rust
+/// // Create your dynamic library loader.
+/// let mut plugin_registry = Libloading::new();
+///
+/// // `my_first_plugin` library exposes the `print_first` function.
+/// plugin_registry.load("my_first_plugin.so").expect("failed to load library 1");
+/// // `my_second_plugin` library exposes the `print_second` function.
+/// plugin_registry.load("my_second_plugin.so").expect("failed to load library 2");
+///
+/// let mut engine = rhai::Engine::new();
+///
+/// // Apply both plugins to the engine.
+/// plugin_registry.apply(&mut engine);
+///
+/// // functions are now registered in the engine and can be called !
+/// engine.run(r"
+///     print_first();
+///     print_second();
+/// ");
+/// ```
 pub struct Libloading {
     /// Plugins loaded in memory.
     plugins: Vec<Box<dyn Plugin>>,
