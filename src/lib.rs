@@ -1,6 +1,4 @@
-//! # rhai-dylib
-//!
-//! This crate provides ways to create dynamic library crates and load them in a rhai engine at runtime.
+//! This crate provides ways to create dynamic library crates and load them in a [rhai engine](https://docs.rs/rhai/latest/rhai/struct.Engine.html) at runtime.
 //! It does it by exposing traits to create plugins and plugin loaders.
 //!
 //! Check out the "simple" example to get started.
