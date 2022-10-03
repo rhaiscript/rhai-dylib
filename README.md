@@ -18,8 +18,17 @@ Plugins can only be loaded in the form of dynamic libraries for now.
 There are multiple limitations with this implementation.
 
 > TL;DR
+> - Compile **EVERYTHING**, plugins and program that will load them, using the **SAME** rust version.
 > - Compile **EVERYTHING**, plugins and program that will load them, inside the **SAME** workspace or **WITHOUT** a workspace.
 > - Export the `RHAI_AHASH_SEED` environment variable with the **SAME** four u64 array (i.e. `RHAI_AHASH_SEED="[1, 2, 3, 4]"`) when building your plugins and the program that will load them.
+
+### Rust ABI
+This plugin implementation uses Rust's ABI, which is unstable and will change between compiler versions.
+
+> A C repr has not yet been provided but is being discussed, probably locked behind a feature gate.
+
+This means that all of the plugins that you will use in your main program need to be compiled with the **EXACT** same
+compiler version.
 
 ### TypeId
 
@@ -39,7 +48,7 @@ If you have any idea of how the compiler generates those typeids between workspa
 
 ### Hashing
 
-Rhai uses ahash under the hood to create identifiers for function calls. For each compilation of your code, a new seed is generated when hashing the types. Meaning that compiling your main program and your plugin different times will result in a hash mismatch, meaning that you won't be able to call the API of your plugin.
+Rhai uses the [`ahash`](https://github.com/tkaitchuck/ahash) crate under the hood to create identifiers for function calls. For each compilation of your code, a new seed is generated when hashing the types. Therefore, compiling your main program and your plugin different times will result in a hash mismatch, meaning that you won't be able to call the API of your plugin.
 
 To bypass that, you need to inject the `RHAI_AHASH_SEED` environment variable with an array of four `u64`.
 
