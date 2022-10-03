@@ -2,15 +2,16 @@ use crate::plugin::{Plugin, PluginConstructor, PLUGIN_ENTRYPOINT};
 
 use super::{PluginLoader, PluginLoaderError};
 
-/// An object used to load and store plugins for Rhai.
+/// Loading dynamic libraries using the [`libloading`](https://github.com/nagisa/rust_libloading) crate.
 pub struct Libloading {
     /// Plugins loaded in memory.
-    pub plugins: Vec<Box<dyn Plugin>>,
+    plugins: Vec<Box<dyn Plugin>>,
     /// Libraries loaded in memory.
-    pub libraries: Vec<libloading::Library>,
+    libraries: Vec<libloading::Library>,
 }
 
 impl Default for Libloading {
+    /// Create a new instance of the loader.
     fn default() -> Self {
         Self {
             plugins: vec![],
@@ -20,7 +21,7 @@ impl Default for Libloading {
 }
 
 impl Libloading {
-    /// Create a new plugin loader using libloading.
+    /// Create a new instance of the loader.
     pub fn new() -> Self {
         Self::default()
     }
@@ -67,7 +68,7 @@ impl PluginLoader for Libloading {
         Ok(self.plugins.last().unwrap())
     }
 
-    /// Apply all plugins loaded in memory to a rhai engine.
+    /// Apply all plugins loaded via the [`Libloading::load`] method to a rhai engine.
     fn apply(&self, engine: &mut rhai::Engine) -> Result<(), super::PluginLoaderError> {
         self.plugins
             .iter()

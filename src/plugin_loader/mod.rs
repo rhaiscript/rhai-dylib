@@ -8,14 +8,15 @@ pub enum PluginLoaderError {
     Loading(String),
 }
 
-/// A trait to implement an object that stores plugins.
+/// A trait to implement an object that load and stores plugins in memory.
 pub trait PluginLoader {
-    /// Load a plugin from a path.
+    /// Load a plugin from a path and return a reference to it.
     fn load<'a>(
         &'a mut self,
         path: impl AsRef<std::path::Path>,
     ) -> Result<&'a Box<dyn crate::plugin::Plugin>, PluginLoaderError>;
 
-    /// Apply plugins to a rule engine.
+    /// Apply plugins to a rhai engine by calling the [`crate::plugin::Plugin::register`]
+    /// implementation for each plugin in the loader.
     fn apply(&self, engine: &mut rhai::Engine) -> Result<(), PluginLoaderError>;
 }
