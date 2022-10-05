@@ -26,3 +26,11 @@ libloading = "0.7.3"
 # NOTE: Using schungx fork for the RHAI_AHASH_SEED env variable feature.
 #       See https://discord.com/channels/767611025456889857/1023946887516131478/1024174374804262963
 rhai = { version = "1.10.1", git = "https://github.com/schungx/rhai" }
+
+[features]
+default = ["c"]
+c = [] # Using the C ABI when compiling the plugin.
+rust = [
+] # Using the Rust ABI when compiling the plugin. Warning: this is unstable,
+# compiling the plugin with a different Rust version than the host may cause issues.
+abi-stable = [] # Using the "abi-stable" crate to compile the plugin and host.

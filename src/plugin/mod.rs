@@ -1,5 +1,7 @@
-pub(crate) type PluginConstructor = fn() -> Box<dyn Plugin>;
+/// Function prototype of the symbol used to create the plugin.
+pub(crate) type EntrypointPrototype = fn() -> PluginContainer;
 
+/// The symbol name used to get the plugin.
 pub(crate) const PLUGIN_ENTRYPOINT: &str = "plugin_entrypoint";
 
 /// Trait used to register new rhai modules from a dynamic library.
@@ -52,3 +54,7 @@ pub trait Plugin {
     /// ```
     fn register(&self, engine: &mut rhai::Engine);
 }
+
+/// Container used to wrap a plugin trait and use the appropriate representation.
+#[cfg_attr(feature = "c", repr(C))]
+pub struct PluginContainer(pub Box<dyn Plugin>);

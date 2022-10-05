@@ -1,4 +1,4 @@
-use crate::plugin::{Plugin, PluginConstructor, PLUGIN_ENTRYPOINT};
+use crate::plugin::{EntrypointPrototype, Plugin, PLUGIN_ENTRYPOINT};
 
 use super::{PluginLoader, PluginLoaderError};
 
@@ -81,12 +81,13 @@ impl PluginLoader for Libloading {
         self.libraries.push(library);
         let library = self.libraries.last().unwrap();
 
-        let constructor = unsafe { library.get::<PluginConstructor>(PLUGIN_ENTRYPOINT.as_bytes()) }
-            .expect("failed to load entrypoint symbol");
+        let constructor =
+            unsafe { library.get::<EntrypointPrototype>(PLUGIN_ENTRYPOINT.as_bytes()) }
+                .expect("failed to load entrypoint symbol");
 
         let plugin = constructor();
 
-        self.plugins.push(plugin);
+        self.plugins.push(plugin.0);
 
         Ok(self.plugins.last().unwrap())
     }
