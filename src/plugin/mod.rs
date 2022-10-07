@@ -1,9 +1,3 @@
-/// Function prototype of the symbol used to create the plugin.
-pub(crate) type EntrypointPrototype = fn() -> PluginContainer;
-
-/// The symbol name used to get the plugin.
-pub(crate) const PLUGIN_ENTRYPOINT: &str = "plugin_entrypoint";
-
 /// Trait used to register new rhai modules from a dynamic library.
 pub trait Plugin {
     /// Update a rhai engine with whatever API the plugin exposes.
@@ -56,5 +50,26 @@ pub trait Plugin {
 }
 
 /// Container used to wrap a plugin trait and use the appropriate representation.
-#[cfg_attr(feature = "c", repr(C))]
-pub struct PluginContainer(pub Box<dyn Plugin>);
+#[cfg(feature = "c")]
+#[repr(C)]
+pub struct CPluginBox(pub Box<dyn Plugin>);
+
+/// Function prototype of the symbol used to create the plugin.
+#[cfg(feature = "c")]
+pub(crate) type CEntrypointPrototype = fn() -> CPluginBox;
+
+/// The symbol name used to get the plugin.
+#[cfg(feature = "c")]
+pub(crate) const C_PLUGIN_ENTRYPOINT: &str = "c_plugin_entrypoint";
+
+/// A plugin loaded on the heap.
+#[cfg(feature = "rust")]
+pub type RustPluginBox = Box<dyn Plugin>;
+
+/// Function prototype of the symbol used to create the plugin.
+#[cfg(feature = "rust")]
+pub(crate) type RustEntrypointPrototype = fn() -> RustPluginBox;
+
+/// The symbol name used to get the plugin.
+#[cfg(feature = "rust")]
+pub(crate) const RUST_PLUGIN_ENTRYPOINT: &str = "rust_plugin_entrypoint";
