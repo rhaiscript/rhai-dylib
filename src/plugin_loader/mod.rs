@@ -11,30 +11,9 @@ pub enum PluginLoaderError {
 /// A trait to implement an object that load and stores plugins in memory.
 pub trait PluginLoader {
     /// Load a plugin from a path and return a reference to it.
-    /// The library exposing the plugin must be using the C ABI.
-    #[cfg(feature = "c")]
-    fn load<'a>(
-        &'a mut self,
+    fn load(
+        &mut self,
         path: impl AsRef<std::path::Path>,
-    ) -> Result<&'a Box<dyn crate::plugin::Plugin>, PluginLoaderError>;
-
-    /// Load a plugin from a path and return a reference to it.
-    /// The library exposing the plugin must be using the Rust ABI.
-    #[cfg(feature = "rust")]
-    fn load_rust_unstable<'a>(
-        &'a mut self,
-        path: impl AsRef<std::path::Path>,
-    ) -> Result<&'a Box<dyn crate::plugin::Plugin>, PluginLoaderError>;
-
-    /// Load a plugin from a path and return a reference to it.
-    /// The library exposing the plugin must be using the ABI from [`abi_stable_crates`](https://github.com/rodrimati1992/abi_stable_crates).
-    #[cfg(feature = "abi-stable")]
-    fn load_rust_stable<'a>(
-        &'a mut self,
-        path: impl AsRef<std::path::Path>,
-    ) -> Result<&'a Box<dyn crate::plugin::Plugin>, PluginLoaderError>;
-
-    /// Apply plugins to a rhai engine by calling the [`crate::plugin::Plugin::register`]
-    /// implementation for each plugin in the loader.
-    fn apply(&self, engine: &mut rhai::Engine) -> Result<(), PluginLoaderError>;
+        engine: &mut rhai::Engine,
+    ) -> Result<(), PluginLoaderError>;
 }

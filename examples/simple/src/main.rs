@@ -10,15 +10,10 @@ fn main() {
     let mut loader = Libloading::new();
     let mut engine = rhai_dylib::rhai::Engine::new();
 
-    // Load the plugin. TODO: impl windows / mac support.
+    // Load the plugin.
     loader
-        .load("./plugin/target/debug/libplugin.so")
+        .load("./plugin/target/debug/libplugin.so", &mut engine)
         .expect("failed to load plugin");
-
-    // Register the plugin's module into the engine.
-    loader
-        .apply(&mut engine)
-        .expect("failed to apply plugin API");
 
     engine
         .run(
