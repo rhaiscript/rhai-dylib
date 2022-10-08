@@ -77,7 +77,7 @@ This crate uses a personal fork of [schungx](https://github.com/schungx/rhai) fo
 
 Here is a list of stuff that we could implement or think about. (to move in issues)
 
-- [ ] How could we "restrain" the API access of the rhai engine ? Lock those behind features ? Using a new type that wraps the engine ?
+- [ ] How could we "restrain" the API access of the rhai engine ? Lock those behind features ? Using a new type that wraps the engine (Proxy) ?
 - [ ] What ABI should be used ? Should we lock different ABIs behind features ?
 - [ ] Configure libloading for multiple targets.
 - [ ] Lock plugin loaders behind features.
