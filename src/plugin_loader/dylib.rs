@@ -8,15 +8,12 @@ use super::{PluginLoader, PluginLoaderError};
 /// // Create your dynamic library loader.
 /// let mut plugin_registry = Libloading::new();
 ///
-/// // `my_first_plugin` library exposes the `print_first` function.
-/// plugin_registry.load("my_first_plugin.so").expect("failed to load library 1");
-/// // `my_second_plugin` library exposes the `print_second` function.
-/// plugin_registry.load("my_second_plugin.so").expect("failed to load library 2");
-///
 /// let mut engine = rhai::Engine::new();
 ///
-/// // Apply both plugins to the engine.
-/// plugin_registry.apply(&mut engine);
+/// // `my_first_plugin` library exposes the `print_first` function.
+/// plugin_registry.load("my_first_plugin.so", &mut engine).expect("failed to load library 1");
+/// // `my_second_plugin` library exposes the `print_second` function.
+/// plugin_registry.load("my_second_plugin.so", &mut engine).expect("failed to load library 2");
 ///
 /// // functions are now registered in the engine and can be called !
 /// engine.run(r"
