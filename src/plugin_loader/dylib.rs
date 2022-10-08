@@ -50,7 +50,8 @@ impl PluginLoader for Libloading {
         use crate::plugin::{Entrypoint, PLUGIN_ENTRYPOINT};
 
         let library = unsafe {
-            if cfg!(target_os = "linux") {
+            #[cfg(target_os = "linux")]
+            {
                 // Workaround for a crash on library unloading on linux: https://github.com/nagisa/rust_libloading/issues/5#issuecomment-244195096
                 libloading::os::unix::Library::open(
                     Some(path.as_ref()),
@@ -58,10 +59,16 @@ impl PluginLoader for Libloading {
                     0x2 | 0x1000,
                 )
                 .map(|library| libloading::Library::from(library))
-            } else if cfg!(target_os = "windows") {
+            }
+
+            #[cfg(target_os = "windows")]
+            {
                 libloading::Library::new(path.as_ref())
-            } else {
-                todo!("unsupported platform, available are linux & windows")
+            }
+
+            #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
+            {
+                unimplemented!("unsupported platform, only linux & windows are available")
             }
         }
         .map_err(|error| {
