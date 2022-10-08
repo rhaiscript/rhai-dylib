@@ -7,11 +7,11 @@ Plugins can only be loaded in the form of dynamic libraries for now.
 
 ## Plugins
 
-`Plugin` is a simple trait that exposes a `register` function. An instance of a rhai engine is passed to this function to enable the plugin to change the engine's parameters, register new function, modules etc ...
+Plugins are crates that expose a `register_rhai_plugin` function that get passed a [`rhai::Engine`](https://docs.rs/rhai/latest/rhai/struct.Engine.html) as argument, enabling the crate to register custom behavior into the engine.
 
 ## Loader
 
-`PluginLoader` is a trait that is used to build objects that load plugins and apply them via the `register` function to a given engine instance. A [libloading](https://github.com/nagisa/rust_libloading) implementation is available, which enables you to load plugins via a `dylib` rust crate.
+`PluginLoader` is a trait that is used to build objects that load plugins in memory. A [libloading](https://github.com/nagisa/rust_libloading) implementation is available, which enables you to load plugins via a `cdylib` or `dylib` rust crate.
 
 ## Pitfalls
 
@@ -19,17 +19,8 @@ There are multiple limitations with this implementation.
 
 > TL;DR
 > To use this crate, you need to:
-> - Compile **EVERYTHING**, plugins and program that will load them, using the **SAME** rust version.
 > - Compile **EVERYTHING**, plugins and program that will load them, inside the **SAME** workspace or **WITHOUT** a workspace.
 > - Export the `RHAI_AHASH_SEED` environment variable with the **SAME** four u64 array (i.e. `RHAI_AHASH_SEED="[1, 2, 3, 4]"`) when building your plugins and the program that will load them.
-
-### Rust ABI
-This plugin implementation uses Rust's ABI, which is unstable and will change between compiler versions.
-
-> A C repr has not yet been provided but is being discussed, probably locked behind a feature gate.
-
-This means that all of the plugins that you will use in your main program need to be compiled with the **EXACT** same
-compiler version.
 
 ### TypeId
 
@@ -73,12 +64,18 @@ RHAI_AHASH_SEED = "[1, 2, 3, 4]"
 Beware: the code handling the `RHAI_AHASH_SEED` environment variable is not yet merged into the main branch of Rhai.
 This crate uses a personal fork of [schungx](https://github.com/schungx/rhai) for the time being.
 
+## Rust ABI
+
+You also can implement a plugin using the Rust ABI, which is unstable and will change between compiler versions.
+
+This means that all of the plugins that you will use in your main program need to be compiled with the **EXACT** same
+compiler version.
+
 ## TODO
 
 Here is a list of stuff that we could implement or think about. (to move in issues)
 
 - [ ] How could we "restrain" the API access of the rhai engine ? Lock those behind features ? Using a new type that wraps the engine (Proxy) ?
-- [ ] What ABI should be used ? Should we lock different ABIs behind features ?
 - [ ] Configure libloading for multiple targets.
 - [ ] Lock plugin loaders behind features.
 - [ ] Create macros that generate entry points.
