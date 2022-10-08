@@ -11,8 +11,13 @@ fn main() {
     let mut engine = rhai_dylib::rhai::Engine::new();
 
     // Load the plugin.
+    #[cfg(target_os = "linux")]
     loader
         .load("./plugin/target/debug/libplugin.so", &mut engine)
+        .expect("failed to load plugin");
+    #[cfg(target_os = "windows")]
+    loader
+        .load("./plugin/target/debug/libplugin.dll", &mut engine)
         .expect("failed to load plugin");
 
     engine
