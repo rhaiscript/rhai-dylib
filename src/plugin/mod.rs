@@ -25,6 +25,7 @@
 //!
 //! // The entrypoint function of your plugin.
 //! // `extern "C"` can be omitted if you are using the `rust` feature.
+//! #[no_mangle]
 //! extern "C" fn register_rhai_plugin(engine: &mut rhai::Engine) {
 //!     // register the module into the engine.
 //!     // `get_num` & `print_stuff` will be available globally in the engine !

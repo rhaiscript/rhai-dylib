@@ -29,8 +29,14 @@ rhai = { version = "1.10.1", git = "https://github.com/schungx/rhai" }
 
 [features]
 default = ["c"]
-c = [] # Using the C ABI when compiling the plugin.
-rust = [
-] # Using the Rust ABI when compiling the plugin. Warning: this is unstable,
-# compiling the plugin with a different Rust version than the host may cause issues.
-abi-stable = [] # Using the "abi-stable" crate to compile the plugin and host.
+
+# Using the C ABI when compiling the plugin. This is the default ABI used, you will thus need to add
+# the `extern "C"` directive on your plugin entrypoint.
+c = []
+
+# Using the Rust ABI when compiling the plugin. Beware, this ABI is unstable for the time being, meaning
+# that it may change between compiler versions and in the future. You do not need the `extern` keyword.
+rust = []
+
+# Using the "abi-stable" crate to compile the plugin and host. This is not yet implemented.
+# abi-stable = []
