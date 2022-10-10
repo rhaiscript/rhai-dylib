@@ -2,16 +2,16 @@
 //!
 //! The [`Libloading`] loader enables you to expend functionality of a [`rhai::Engine`] via dynamic libraries using [`libloading`](https://github.com/nagisa/rust_libloading).
 //!
-//! You need to declare the entrypoint function of your extension, following the [`Entrypoint`] prototype.
-//! The name of the function must be the same as [`EXTENSION_ENTRYPOINT`].
+//! You need to declare the entrypoint function of your module, following the [`Entrypoint`] prototype.
+//! The name of the function must be the same as [`MODULE_ENTRYPOINT`].
 //!
 //! ```rust
-//! fn update_engine(engine: &mut rhai::Engine) {
+//! fn module_entrypoint() -> rhai::Shared<rhai::Module> {
 //!     // ...
 //! }
 //! ```
 //!
-//! A really nice way to implement an extension is using Rhai's [plugin modules](https://rhai.rs/book/plugins/module.html).
+//! You can easily, for example, implement and export your module using Rhai's [plugin modules](https://rhai.rs/book/plugins/module.html).
 //!
 //! ```rust
 //! // Use the `export_module` macro to generate your api.
@@ -25,24 +25,21 @@
 //!     }
 //! }
 //!
-//! // The entrypoint function of your extension.
+//! // The entrypoint function of your module.
 //! // `extern "C"` can be omitted if you are using the `rust` feature.
 //! #[no_mangle]
-//! extern "C" fn update_engine(engine: &mut rhai::Engine) {
-//!     // register your API via a `rhai::module` into the engine.
-//!     // `get_num` & `print_stuff` will be available globally in the engine.
-//!     engine.register_global_module(rhai::exported_module!(my_api).into());
-//!
-//!     // You could also use `register_static_module` ... or any method of the engine !
+//! extern "C" fn module_entrypoint() -> rhai::Shared<rhai::Module> {
+//!     // Build your module.
+//!     rhai::exported_module!(my_api).into()
 //! }
 //! ```
 
 use super::{Loader, LoaderError};
 
 /// Entrypoint prototype for a rhai extension.
-pub type Entrypoint = fn(&mut rhai::Engine);
+pub type Entrypoint = fn() -> rhai::Shared<rhai::Module>;
 /// The name of the function that will be called to update the [`rhai::Engine`].
-pub const EXTENSION_ENTRYPOINT: &str = "update_engine";
+pub const MODULE_ENTRYPOINT: &str = "module_entrypoint";
 
 /// Loading dynamic libraries using the [`libloading`](https://github.com/nagisa/rust_libloading) crate.
 ///
@@ -88,8 +85,7 @@ impl Loader for Libloading {
     fn load<'a>(
         &'a mut self,
         path: impl AsRef<std::path::Path>,
-        engine: &mut rhai::Engine,
-    ) -> Result<(), LoaderError> {
+    ) -> Result<rhai::Shared<rhai::Module>, LoaderError> {
         let library = unsafe {
             #[cfg(target_os = "linux")]
             {
@@ -125,12 +121,10 @@ impl Loader for Libloading {
         self.libraries.push(library);
         let library = self.libraries.last().expect("library just got inserted");
 
-        let update_engine = unsafe { library.get::<Entrypoint>(EXTENSION_ENTRYPOINT.as_bytes()) }
+        let module_entrypoint = unsafe { library.get::<Entrypoint>(MODULE_ENTRYPOINT.as_bytes()) }
             // TODO: make this error message more explicit.
             .map_err(|error| LoaderError::Loading(error.to_string()))?;
 
-        update_engine(engine);
-
-        Ok(())
+        Ok(module_entrypoint())
     }
 }

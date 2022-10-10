@@ -14,12 +14,19 @@ pub enum LoaderError {
     Loading(String),
 }
 
+impl Into<Box<rhai::EvalAltResult>> for LoaderError {
+    fn into(self) -> Box<rhai::EvalAltResult> {
+        match self {
+            LoaderError::Loading(error) => format!("Error while loading a module: {error}").into(),
+        }
+    }
+}
+
 /// A trait to implement an object that load and stores extensions in memory.
 pub trait Loader {
     /// Load an extension from a path and apply it to a [`rhai::Engine`].
     fn load(
         &mut self,
         path: impl AsRef<std::path::Path>,
-        engine: &mut rhai::Engine,
-    ) -> Result<(), LoaderError>;
+    ) -> Result<rhai::Shared<rhai::Module>, LoaderError>;
 }

@@ -82,3 +82,4 @@ Here is a list of stuff that we could implement or think about. (to move in issu
 - [ ] Update seeds for ahash.
 - [ ] Add examples.
 - [ ] Add some unit & integration tests.
+- [ ] the "internals" feature is necessary for the impl of the module resolver. We should directly merge that into Rhai itself.

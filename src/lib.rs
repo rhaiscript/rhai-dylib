@@ -74,6 +74,8 @@
 
 /// Trait implementation to create objects that load plugins.
 pub mod loader;
+/// A Rhai module resolver loading dynamic libraries.
+pub mod module_resolvers;
 
 /// Re-exporting rhai to prevent version mismatch.
 pub use rhai;
