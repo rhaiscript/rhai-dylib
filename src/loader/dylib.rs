@@ -106,7 +106,7 @@ impl Loader for Libloading {
             #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
             {
                 return Err(LoaderError::Loading(
-                    "unsupported platform, only linux & windows are available".to_string(),
+                    "unsupported platform, only linux & windows are supported".to_string(),
                 ));
             }
         }

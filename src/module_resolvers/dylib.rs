@@ -38,7 +38,7 @@ impl DylibModuleResolver {
     /// use rhai_dylib::module_resolvers::DylibModuleResolver;
     ///
     /// // Create a new 'DylibModuleResolver' loading dynamic libraries
-    /// // from the 'scripts' subdirectory.
+    /// // from the 'scripts' directory.
     /// let resolver = DylibModuleResolver::with_path("./scripts");
     ///
     /// let mut engine = Engine::new();
@@ -101,6 +101,8 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         path.set_extension("so");
         #[cfg(target_os = "windows")]
         path.set_extension("dll");
+        #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
+        return Err("unsupported platform, only linux & windows are supported".into());
 
         dbg!(&path);
 
