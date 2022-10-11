@@ -10,8 +10,10 @@ pub struct DylibModuleResolver {
     base_path: Option<std::path::PathBuf>,
     /// Dynamic library loader.
     loader: rhai::Locked<Libloading>,
-    // cache_enabled: bool,
-    // cache: Locked<BTreeMap<PathBuf, Shared<Module>>>,
+    /// Is module caching enabled for this resolver.
+    cache_enabled: bool,
+    /// Cache of loaded modules, empty if [`Self::cache_enabled`] is false.
+    cache: rhai::Locked<std::collections::BTreeMap<std::path::PathBuf, rhai::Shared<rhai::Module>>>,
 }
 
 impl Default for DylibModuleResolver {
@@ -19,6 +21,8 @@ impl Default for DylibModuleResolver {
         Self {
             base_path: None,
             loader: Libloading::new().into(),
+            cache_enabled: true,
+            cache: rhai::Locked::new(std::collections::BTreeMap::new()),
         }
     }
 }
@@ -27,6 +31,20 @@ impl DylibModuleResolver {
     /// Create a new instance of the resolver.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Enable/disable the cache.
+    #[inline(always)]
+    pub fn enable_cache(&mut self, enable: bool) -> &mut Self {
+        self.cache_enabled = enable;
+        self
+    }
+
+    /// Is the cache enabled?
+    #[inline(always)]
+    #[must_use]
+    pub fn is_cache_enabled(&self) -> bool {
+        self.cache_enabled
     }
 
     /// Create a new [`DylibModuleResolver`] with a specific base path.
@@ -86,16 +104,22 @@ impl DylibModuleResolver {
 impl rhai::ModuleResolver for DylibModuleResolver {
     fn resolve(
         &self,
-        engine: &rhai::Engine,
+        _: &rhai::Engine,
         source: Option<&str>,
         path: &str,
         pos: rhai::Position,
     ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {
         dbg!(source, path, pos);
 
-        let mut path = source
+        let path = source
             .map(|source| std::path::PathBuf::from_str(source).expect("is infallible"))
             .unwrap_or_else(|| std::path::PathBuf::from_str(path).expect("is infallible"));
+
+        let mut path = self
+            .base_path
+            .as_ref()
+            .and_then(|base_path| Some(std::path::PathBuf::from_iter([base_path, &path])))
+            .unwrap_or(path);
 
         #[cfg(target_os = "linux")]
         path.set_extension("so");
@@ -104,12 +128,26 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
         return Err("unsupported platform, only linux & windows are supported".into());
 
-        dbg!(&path);
+        // NOTE: check for rhai's `locked_read` & `locked_write` methods.
+        let cache = self.cache.borrow_mut();
 
-        self.loader
-            .borrow_mut()
-            .load(path.as_path())
-            .map_err(|err| err.into())
+        let load_module = || {
+            self.loader
+                .borrow_mut()
+                .load(path.as_path())
+                .map_err(|err| err.into())
+        };
+
+        if !self.is_cache_enabled() {
+            load_module()
+        } else if let Some(module) = cache.get(&path) {
+            Ok(module.clone())
+        } else {
+            let module = load_module()?;
+            self.cache.borrow_mut().insert(path, module.clone());
+
+            Ok(module)
+        }
     }
 
     fn resolve_raw(
