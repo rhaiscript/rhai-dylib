@@ -28,19 +28,3 @@ libloading = "0.7.3"
 rhai = { version = "1.10.1", git = "https://github.com/schungx/rhai", features = [
     "internals", # Used to implement the ModuleResolver trait.
 ] }
-
-[features]
-default = ["c"]
-
-# Using the C ABI when compiling the plugin. This is the default ABI used, thus you will need to:
-# - Add the `extern "C"` directive on your plugin entrypoint.
-# - Set the crate-type to `cdylib` in your Cargo.toml.
-c = []
-
-# Using the Rust ABI when compiling the plugin. Beware, this ABI is unstable for the time being, meaning
-# that it may change between compiler versions and in the future. You do not need the `extern` keyword,
-# but you have to set the crate-type to `dylib` in your Cargo.toml.
-rust = []
-
-# Using the "abi-stable" crate to compile the plugin and host. This is not yet implemented.
-# abi-stable = []
