@@ -12,7 +12,7 @@ import "./plugin/target/debug/libplugin" as plugin;
 
 plugin::print_stuff();
 debug(plugin::triple_add(1, 2, 3));
-    
+
     "#,
         )
         .unwrap();
