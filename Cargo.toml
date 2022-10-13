@@ -18,7 +18,7 @@ keywords = [
     "embedded",
     "plugins",
 ]
-# categories = []
+categories = ["embedded"]
 
 [dependencies]
 libloading = "0.7.3"

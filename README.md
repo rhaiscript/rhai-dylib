@@ -97,10 +97,8 @@ compiler version.
 Here is a list of stuff that we could implement or think about. (to move in issues)
 
 - [ ] How could we "restrain" the API access of the rhai engine ? Lock those behind features ? Using a new type that wraps the engine (Proxy) ?
-- [ ] Configure libloading for multiple targets.
 - [ ] Lock plugin loaders behind features.
 - [ ] Create macros that generate entry points.
 - [ ] Update seeds for ahash.
-- [ ] Add examples.
 - [ ] Add some unit & integration tests.
 - [ ] the "internals" feature is necessary for the impl of the module resolver. We should directly merge that into Rhai itself.
