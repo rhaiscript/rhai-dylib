@@ -8,5 +8,6 @@ The `main.rs` file creates a loader using [`libloading`](https://github.com/nagi
 Run the example:
 
 ```sh
+cd plugin && cargo build && cd ..
 cargo run
 ```

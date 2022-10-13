@@ -69,36 +69,6 @@ impl DylibModuleResolver {
             ..Default::default()
         }
     }
-
-    // /// Construct a path to the desired dynamic library.
-    // #[must_use]
-    // fn get_file_path(
-    //     &self,
-    //     path: &str,
-    //     source_path: Option<&std::path::Path>,
-    // ) -> std::path::PathBuf {
-    //     let path = std::path::Path::new(path);
-
-    //     let mut file_path;
-
-    //     if path.is_relative() {
-    //         file_path = self
-    //             .base_path
-    //             .clone()
-    //             .or_else(|| source_path.map(Into::into))
-    //             .unwrap_or_default();
-    //         file_path.push(path);
-    //     } else {
-    //         file_path = path.into();
-    //     }
-
-    //     #[cfg(target_os = "linux")]
-    //     file_path.set_extension("so");
-    //     #[cfg(target_os = "windows")]
-    //     file_path.set_extension("dll");
-
-    //     file_path
-    // }
 }
 
 impl rhai::ModuleResolver for DylibModuleResolver {
@@ -129,7 +99,7 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         return Err("unsupported platform, only linux & windows are supported".into());
 
         // NOTE: check for rhai's `locked_read` & `locked_write` methods.
-        let cache = self.cache.borrow_mut();
+        let mut cache = self.cache.borrow_mut();
 
         let load_module = || {
             self.loader
@@ -144,7 +114,7 @@ impl rhai::ModuleResolver for DylibModuleResolver {
             Ok(module.clone())
         } else {
             let module = load_module()?;
-            self.cache.borrow_mut().insert(path, module.clone());
+            cache.insert(path, module.clone());
 
             Ok(module)
         }

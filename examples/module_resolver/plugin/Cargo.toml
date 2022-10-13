@@ -1,0 +1,13 @@
+[package]
+name = "plugin"
+version = "0.1.0"
+edition = "2021"
+
+# To use the "dylib" loader, you must create a rust dynamic library crate.
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+rhai-dylib = { version = "0.1.0", path = "../../../", default-features = false, features = [
+    "c",
+] }

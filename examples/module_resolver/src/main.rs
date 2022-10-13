@@ -8,10 +8,10 @@ fn main() {
     engine
         .run(
             r#"
-import "../simple/plugin/target/debug/libplugin" as plugin;
+import "./plugin/target/debug/libplugin" as plugin;
 
-print_stuff();
-debug(triple_add(1, 2, 3));
+plugin::print_stuff();
+debug(plugin::triple_add(1, 2, 3));
     
     "#,
         )
