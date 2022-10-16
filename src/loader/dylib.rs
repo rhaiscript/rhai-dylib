@@ -34,6 +34,10 @@
 //! }
 //! ```
 
+#[cfg(not(target_os = "linux"))]
+#[cfg(not(target_os = "windows"))]
+compile_error!("unsupported platform - only Linux & Windows are supported");
+
 use super::{Loader, LoaderError};
 
 /// Entrypoint prototype for a rhai extension.
@@ -101,13 +105,6 @@ impl Loader for Libloading {
             #[cfg(target_os = "windows")]
             {
                 libloading::Library::new(path.as_ref())
-            }
-
-            #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
-            {
-                return Err(LoaderError::Loading(
-                    "unsupported platform, only linux & windows are supported".to_string(),
-                ));
             }
         }
         .map_err(|error| {

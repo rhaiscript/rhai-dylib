@@ -1,5 +1,9 @@
 //!
 
+#[cfg(not(target_os = "linux"))]
+#[cfg(not(target_os = "windows"))]
+compile_error!("unsupported platform - only Linux & Windows are supported");
+
 use std::str::FromStr;
 
 use crate::loader::{dylib::Libloading, Loader};
@@ -95,8 +99,6 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         path.set_extension("so");
         #[cfg(target_os = "windows")]
         path.set_extension("dll");
-        #[cfg(all(not(target_os = "linux"), not(target_os = "windows")))]
-        return Err("unsupported platform, only linux & windows are supported".into());
 
         // NOTE: check for rhai's `locked_read` & `locked_write` methods.
         let mut cache = self.cache.borrow_mut();

@@ -10,6 +10,7 @@ homepage = "https://rhai.rs"
 repository = "https://github.com/rhaiscript"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/rhai-dylib/0.1.0/rhai_dylib/"
 include = ["/src/**/*", "/Cargo.toml", "/README.md", "LICENSE*"]
 keywords = [
     "scripting",
