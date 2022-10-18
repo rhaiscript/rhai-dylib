@@ -6,7 +6,7 @@ compile_error!("unsupported platform - only Linux & Windows are supported");
 
 use std::str::FromStr;
 
-use crate::loader::{dylib::Libloading, Loader};
+use crate::loader::{libloading::Libloading, Loader};
 
 /// A module resolver that load dynamic libraries pointed by the `import` path.
 pub struct DylibModuleResolver {

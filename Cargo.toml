@@ -22,10 +22,17 @@ keywords = [
 categories = ["embedded"]
 
 [dependencies]
-libloading = "0.7.3"
+libloading = { version = "0.7.3", optional = true }
 
 # NOTE: Using schungx fork for the RHAI_AHASH_SEED env variable feature.
 #       See https://discord.com/channels/767611025456889857/1023946887516131478/1024174374804262963
 rhai = { version = "1.10.1", git = "https://github.com/schungx/rhai", features = [
     "internals", # Used to implement the ModuleResolver trait.
 ] }
+
+[features]
+default = ["libloading"]
+
+libloading = [
+    "dep:libloading",
+] # enable module resolver & plugin loader using the libloading crate.

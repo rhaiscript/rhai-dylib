@@ -1,1 +1,2 @@
-pub mod dylib;
+#[cfg(feature = "libloading")]
+pub mod libloading;
