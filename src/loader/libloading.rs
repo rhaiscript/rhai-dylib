@@ -34,13 +34,9 @@
 //! }
 //! ```
 
-#[cfg(not(target_os = "linux"))]
-#[cfg(not(target_os = "windows"))]
-compile_error!("unsupported platform - only Linux & Windows are supported");
-
 use super::{Loader, LoaderError};
 
-/// Entrypoint prototype for a rhai extension.
+/// Entrypoint prototype for a Rhai module "constructor".
 pub type Entrypoint = fn() -> rhai::Shared<rhai::Module>;
 /// The name of the function that will be called to update the [`rhai::Engine`].
 pub const MODULE_ENTRYPOINT: &str = "module_entrypoint";
@@ -54,10 +50,10 @@ pub const MODULE_ENTRYPOINT: &str = "module_entrypoint";
 /// let mut loader = Libloading::new();
 /// let mut engine = rhai::Engine::new();
 ///
-/// // `my_first_extension` library exposes the `print_first` function.
-/// loader.load("my_first_extension.so", &mut engine).expect("failed to load library 1");
-/// // `my_second_extension` library exposes the `print_second` function.
-/// loader.load("my_second_extension.so", &mut engine).expect("failed to load library 2");
+/// // `my_first_module` library exposes the `print_first` function.
+/// loader.load("my_first_module.so", &mut engine).expect("failed to load library 1");
+/// // `my_second_module` library exposes the `print_second` function.
+/// loader.load("my_second_module.so", &mut engine).expect("failed to load library 2");
 ///
 /// // functions are now registered in the engine and can be called !
 /// engine.run(r"
@@ -85,7 +81,7 @@ impl Libloading {
 }
 
 impl Loader for Libloading {
-    /// Load a rhai extension from a dynamic library.
+    /// Load a rhai module from a dynamic library.
     fn load<'a>(
         &'a mut self,
         path: impl AsRef<std::path::Path>,

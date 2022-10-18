@@ -1,9 +1,5 @@
 //!
 
-#[cfg(not(target_os = "linux"))]
-#[cfg(not(target_os = "windows"))]
-compile_error!("unsupported platform - only Linux & Windows are supported");
-
 use std::str::FromStr;
 
 use crate::loader::{libloading::Libloading, Loader};
