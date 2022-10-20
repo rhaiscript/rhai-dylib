@@ -6,9 +6,11 @@ This crate exposes a simple API to load `dylib` Rust crates in a [Rhai](https://
 
 ## Loader
 
-`PluginLoader` is a trait that is used to build objects that load plugins in memory. A [libloading](https://github.com/nagisa/rust_libloading) implementation is available, which enables you to load plugins via a `cdylib` or `dylib` rust crate.
+`Loader` is a trait that is used to build objects that load rhai modules from dynamic libraries in memory. A [libloading](https://github.com/nagisa/rust_libloading) implementation is available, which enables you to load modules via a `cdylib` or `dylib` rust crate.
 
 Check the `simple` example for more details.
+
+> You can easily setup a dynamic library for Rhai by using [cargo-generate](https://github.com/cargo-generate/cargo-generate) and the [rhai-dylib-template](https://github.com/ltabis/rhai-dylib-template).
 
 ## Module Resolver
 
