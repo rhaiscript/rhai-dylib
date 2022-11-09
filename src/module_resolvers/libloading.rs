@@ -77,10 +77,8 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         _: &rhai::Engine,
         source: Option<&str>,
         path: &str,
-        pos: rhai::Position,
+        _: rhai::Position,
     ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {
-        dbg!(source, path, pos);
-
         let path = source
             .map(|source| std::path::PathBuf::from_str(source).expect("is infallible"))
             .unwrap_or_else(|| std::path::PathBuf::from_str(path).expect("is infallible"));

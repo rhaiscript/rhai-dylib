@@ -10,9 +10,8 @@
 //!
 //! > TL;DR
 //! > To use this crate, you need to:
-//! > - Compile **EVERYTHING**, plugins and program that will load them, using the **SAME** rust version.
 //! > - Compile **EVERYTHING**, plugins and program that will load them, inside the **SAME** workspace or **WITHOUT** a workspace.
-//! > - Export the `RHAI_AHASH_SEED` environment variable with the **SAME** four u64 array (i.e. `RHAI_AHASH_SEED="[1, 2, 3, 4]"`) when building your plugins and the program that will load them.
+//! > - Use the `rhai::config::hashing::set_ahash_seed` function with the **SAME** four u64 array (i.e. `rhai::config::hashing::set_ahash_seed(Some([1, 2, 3, 4]))`) when building your plugins and the program that will load them.
 //!
 //! ## Rust ABI
 //!
@@ -43,28 +42,9 @@
 //!
 //! Rhai uses the [`ahash`](https://github.com/tkaitchuck/ahash) crate under the hood to create identifiers for function calls. For each compilation of your code, a new seed is generated when hashing the types. Therefore, compiling your main program and your plugin different times will result in a hash mismatch, meaning that you won't be able to call the API of your plugin.
 //!
-//! To bypass that, you need to inject the `RHAI_AHASH_SEED` environment variable with an array of four `u64`.
+//! To bypass that, you need to use the `rhai::config::hashing::set_ahash_seed` function with an array of four `u64`.
 //!
-//! ```sh
-//! export RHAI_AHASH_SEED="[1, 2, 3, 4]" # The seed is now fixed and won't change between compilations.
-//!
-//! # Compiling will create the same hashes for functions.
-//! cargo build --manifest-path ./my_program/Cargo.toml
-//! cargo build --manifest-path ./my_plugin/Cargo.toml
-//! ```
-//!
-//! instead of exporting the variable like above, you can use a [cargo config](https://doc.rust-lang.org/cargo/reference/config.html) file.
-//!
-//! ```toml
-//! # .cargo/config.toml
-//! [env]
-//! # Replace the seed to your own liking, it must be the same for every plugins.
-//! RHAI_AHASH_SEED = "[1, 2, 3, 4]"
-//! ```
-//!
-//! Beware: the code handling the `RHAI_AHASH_SEED` environment variable is not yet merged into the main branch of Rhai.
-//! This crate uses a personal fork of [schungx](https://github.com/schungx/rhai) for the time being.
-//!
+//! Beware that the `rhai::config::hashing::set_ahash_seed` function is only available from the main branch of Rhai for the time being.
 
 #![deny(missing_docs)]
 #![warn(clippy::all)]

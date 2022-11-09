@@ -24,9 +24,9 @@ categories = ["embedded"]
 [dependencies]
 libloading = { version = "0.7.3", optional = true }
 
-# NOTE: Using schungx fork for the RHAI_AHASH_SEED env variable feature.
-#       See https://discord.com/channels/767611025456889857/1023946887516131478/1024174374804262963
-rhai = { version = "1.10.1", git = "https://github.com/schungx/rhai", features = [
+# NOTE: Using rhaiscript main branch for the rhai::config::hashing::set_ahash_seed feature.
+#       See https://discord.com/channels/767611025456889857/776309562881736724/1038079906409619516
+rhai = { version = "1.10.1", git = "https://github.com/rhaiscript/rhai", features = [
     "internals", # Used to implement the ModuleResolver trait.
 ] }
 
