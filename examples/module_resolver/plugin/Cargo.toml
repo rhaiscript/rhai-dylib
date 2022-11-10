@@ -8,6 +8,4 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-rhai-dylib = { version = "0.1.0", path = "../../../", default-features = false, features = [
-    "c",
-] }
+rhai-dylib = { version = "0.1.0", path = "../../../" }
