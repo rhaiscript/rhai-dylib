@@ -1,11 +1,3 @@
-[package]
-name = "simple"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
-build = "build.rs"
-
-[dependencies]
-rhai-dylib = { version = "0.1.0", path = "../../", default-features = false, features = [
-    "c",
-] }
+members = ["main", "engine", "plugin"]
