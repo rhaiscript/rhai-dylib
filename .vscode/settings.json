@@ -1,9 +1,3 @@
 {
-  "cSpell.words": [
-    "dylib",
-    "libloading",
-    "linux",
-    "rhai",
-    "Rhai"
-  ]
+  "cSpell.words": ["ahash", "dylib", "libloading", "linux", "rhai", "Rhai"]
 }
