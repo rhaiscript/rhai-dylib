@@ -37,3 +37,14 @@ sync = ["rhai/sync"]
 libloading = [
     "dep:libloading",
 ] # enable module resolver & plugin loader using the libloading crate.
+
+[[example]]
+name = "dynamic_library"
+crate-type = ["cdylib"]
+path = "examples/dynamic_library/lib.rs"
+
+[[example]]
+name = "loader"
+
+[[example]]
+name = "module_resolver"

@@ -15,7 +15,7 @@ fn main() {
     engine
         .run(
             r#"
-import "./target/debug/libplugin" as plugin;
+import "./target/debug/examples/libdynamic_library" as plugin;
 
 plugin::print_stuff();
 debug(plugin::triple_add(1, 2, 3));
