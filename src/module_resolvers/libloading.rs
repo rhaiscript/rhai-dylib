@@ -2,7 +2,9 @@
 
 use std::str::FromStr;
 
-use crate::loader::{libloading::Libloading, Loader};
+use super::{locked_read, locked_write};
+use crate::loader::libloading::Libloading;
+use crate::loader::Loader;
 
 /// A module resolver that load dynamic libraries pointed by the `import` path.
 pub struct DylibModuleResolver {
@@ -94,23 +96,17 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         #[cfg(target_os = "windows")]
         path.set_extension("dll");
 
-        // NOTE: check for rhai's `locked_read` & `locked_write` methods.
-        let mut cache = self.cache.borrow_mut();
-
-        let load_module = || {
-            self.loader
-                .borrow_mut()
+        if !self.is_cache_enabled() {
+            locked_write(&self.loader)
                 .load(path.as_path())
                 .map_err(|err| err.into())
-        };
-
-        if !self.is_cache_enabled() {
-            load_module()
-        } else if let Some(module) = cache.get(&path) {
+        } else if let Some(module) = locked_read(&self.cache).get(&path) {
             Ok(module.clone())
         } else {
-            let module = load_module()?;
-            cache.insert(path, module.clone());
+            let module = locked_write(&self.loader)
+                .load(path.as_path())
+                .map_err::<Box<rhai::EvalAltResult>, _>(|err| err.into())?;
+            locked_write(&self.cache).insert(path, module.clone());
 
             Ok(module)
         }
