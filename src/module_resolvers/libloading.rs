@@ -100,15 +100,19 @@ impl rhai::ModuleResolver for DylibModuleResolver {
             locked_write(&self.loader)
                 .load(path.as_path())
                 .map_err(|err| err.into())
-        } else if let Some(module) = locked_read(&self.cache).get(&path) {
-            Ok(module.clone())
         } else {
-            let module = locked_write(&self.loader)
-                .load(path.as_path())
-                .map_err::<Box<rhai::EvalAltResult>, _>(|err| err.into())?;
-            locked_write(&self.cache).insert(path, module.clone());
+            let module = { locked_read(&self.cache).get(&path).cloned() };
 
-            Ok(module)
+            if let Some(module) = module {
+                Ok(module)
+            } else {
+                let module = locked_write(&self.loader)
+                    .load(path.as_path())
+                    .map_err::<Box<rhai::EvalAltResult>, _>(|err| err.into())?;
+                locked_write(&self.cache).insert(path, module.clone());
+
+                Ok(module)
+            }
         }
     }
 
