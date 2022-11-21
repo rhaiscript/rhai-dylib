@@ -96,19 +96,22 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         #[cfg(target_os = "windows")]
         path.set_extension("dll");
 
+        if !path.exists() {
+            return Err(Box::new(rhai::EvalAltResult::ErrorModuleNotFound(
+                path.to_str().map_or(String::default(), |s| s.to_string()),
+                rhai::Position::NONE,
+            )));
+        }
+
         if !self.is_cache_enabled() {
-            locked_write(&self.loader)
-                .load(path.as_path())
-                .map_err(|err| err.into())
+            locked_write(&self.loader).load(path.as_path())
         } else {
             let module = { locked_read(&self.cache).get(&path).cloned() };
 
             if let Some(module) = module {
                 Ok(module)
             } else {
-                let module = locked_write(&self.loader)
-                    .load(path.as_path())
-                    .map_err::<Box<rhai::EvalAltResult>, _>(|err| err.into())?;
+                let module = locked_write(&self.loader).load(path.as_path())?;
                 locked_write(&self.cache).insert(path, module.clone());
 
                 Ok(module)

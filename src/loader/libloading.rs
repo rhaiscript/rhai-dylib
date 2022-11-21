@@ -34,7 +34,7 @@
 //! }
 //! ```
 
-use super::{Loader, LoaderError};
+use super::Loader;
 
 /// Entrypoint prototype for a Rhai module "constructor".
 pub type Entrypoint = fn() -> rhai::Shared<rhai::Module>;
@@ -85,7 +85,7 @@ impl Loader for Libloading {
     fn load<'a>(
         &'a mut self,
         path: impl AsRef<std::path::Path>,
-    ) -> Result<rhai::Shared<rhai::Module>, LoaderError> {
+    ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {
         let library = unsafe {
             #[cfg(target_os = "linux")]
             {
@@ -104,19 +104,28 @@ impl Loader for Libloading {
             }
         }
         .map_err(|error| {
-            LoaderError::Loading(format!(
-                "failed to load library at {:?}: {}",
-                path.as_ref(),
-                error
-            ))
+            rhai::EvalAltResult::ErrorInModule(
+                path.as_ref()
+                    .to_str()
+                    .map_or(String::default(), |s| s.to_string()),
+                error.to_string().into(),
+                rhai::Position::NONE,
+            )
         })?;
 
         self.libraries.push(library);
         let library = self.libraries.last().expect("library just got inserted");
 
         let module_entrypoint = unsafe { library.get::<Entrypoint>(MODULE_ENTRYPOINT.as_bytes()) }
-            // TODO: make this error message more explicit.
-            .map_err(|error| LoaderError::Loading(error.to_string()))?;
+            .map_err(|error| {
+                rhai::EvalAltResult::ErrorInModule(
+                    path.as_ref()
+                        .to_str()
+                        .map_or(String::default(), |s| s.to_string()),
+                    error.to_string().into(),
+                    rhai::Position::NONE,
+                )
+            })?;
 
         Ok(module_entrypoint())
     }
