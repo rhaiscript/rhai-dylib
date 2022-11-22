@@ -47,3 +47,4 @@ path = "examples/loader/main.rs"
 
 [[example]]
 name = "module_resolver"
+path = "examples/module_resolver/main.rs"
