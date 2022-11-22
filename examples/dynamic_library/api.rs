@@ -1,6 +1,6 @@
 use rhai_dylib::rhai::plugin::{
-    mem, Dynamic, FnAccess, FnNamespace, ImmutableString, NativeCallContext, PluginFunction,
-    RhaiResult, TypeId,
+    mem, Dynamic, EvalAltResult, FnAccess, FnNamespace, ImmutableString, NativeCallContext,
+    PluginFunction, Position, RhaiResult, TypeId,
 };
 
 use rhai_dylib::rhai::{Map, Module, INT};
