@@ -1,10 +1,13 @@
 //!
 
-use std::str::FromStr;
-
 use super::{locked_read, locked_write};
 use crate::loader::libloading::Libloading;
 use crate::loader::Loader;
+
+#[cfg(target_os = "linux")]
+const DYLIB_EXTENSION: &str = "so";
+#[cfg(target_os = "windows")]
+const DYLIB_EXTENSION: &str = "dll";
 
 /// A module resolver that load dynamic libraries pointed by the `import` path.
 pub struct DylibModuleResolver {
@@ -71,35 +74,55 @@ impl DylibModuleResolver {
             ..Default::default()
         }
     }
-}
 
-impl rhai::ModuleResolver for DylibModuleResolver {
-    fn resolve(
+    /// Construct a full file path.
+    #[must_use]
+    pub fn get_file_path(
         &self,
-        _: &rhai::Engine,
+        path: &str,
+        source_path: Option<&std::path::Path>,
+    ) -> std::path::PathBuf {
+        let path = std::path::Path::new(path);
+
+        let mut file_path;
+
+        if path.is_relative() {
+            file_path = self
+                .base_path
+                .clone()
+                .or_else(|| source_path.map(Into::into))
+                .unwrap_or_default();
+            file_path.push(path);
+        } else {
+            file_path = path.into();
+        }
+
+        file_path.set_extension(DYLIB_EXTENSION);
+
+        file_path
+    }
+
+    /// Resolve a module based on a path.
+    fn impl_resolve(
+        &self,
+        global: Option<&mut rhai::GlobalRuntimeState>,
         source: Option<&str>,
         path: &str,
-        _: rhai::Position,
+        position: rhai::Position,
     ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {
-        let path = source
-            .map(|source| std::path::PathBuf::from_str(source).expect("is infallible"))
-            .unwrap_or_else(|| std::path::PathBuf::from_str(path).expect("is infallible"));
-
-        let mut path = self
-            .base_path
+        // Load relative paths from source if there is no base path specified
+        let source_path = global
             .as_ref()
-            .and_then(|base_path| Some(std::path::PathBuf::from_iter([base_path, &path])))
-            .unwrap_or(path);
+            .and_then(|g| g.source())
+            .or(source)
+            .and_then(|p| std::path::Path::new(p).parent());
 
-        #[cfg(target_os = "linux")]
-        path.set_extension("so");
-        #[cfg(target_os = "windows")]
-        path.set_extension("dll");
+        let path = self.get_file_path(path, source_path);
 
         if !path.exists() {
             return Err(Box::new(rhai::EvalAltResult::ErrorModuleNotFound(
                 path.to_str().map_or(String::default(), |s| s.to_string()),
-                rhai::Position::NONE,
+                position,
             )));
         }
 
@@ -118,15 +141,27 @@ impl rhai::ModuleResolver for DylibModuleResolver {
             }
         }
     }
+}
+
+impl rhai::ModuleResolver for DylibModuleResolver {
+    fn resolve(
+        &self,
+        _: &rhai::Engine,
+        source: Option<&str>,
+        path: &str,
+        position: rhai::Position,
+    ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {
+        self.impl_resolve(None, source, path, position)
+    }
 
     fn resolve_raw(
         &self,
-        engine: &rhai::Engine,
+        _: &rhai::Engine,
         global: &mut rhai::GlobalRuntimeState,
         path: &str,
-        pos: rhai::Position,
+        position: rhai::Position,
     ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {
-        self.resolve(engine, global.source(), path, pos)
+        self.impl_resolve(Some(global), None, path, position)
     }
 
     fn resolve_ast(
