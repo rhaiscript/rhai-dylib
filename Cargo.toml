@@ -43,6 +43,7 @@ path = "examples/dynamic_library/lib.rs"
 
 [[example]]
 name = "loader"
+path = "examples/loader/main.rs"
 
 [[example]]
 name = "module_resolver"
