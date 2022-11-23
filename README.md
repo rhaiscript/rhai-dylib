@@ -27,10 +27,9 @@ let mut engine = rhai::Engine::new();
 engine.set_module_resolver(DylibModuleResolver::new());
 
 engine.run(r#"
-// import your dynamic library.
-import "path/to/my/dylib";
+import "/usr/lib/libmy" as my; // Import your dynamic library.
 
-// ...
+my::my_function(); // Use exported items !
 "#).expect("failed to run script");
 ```
 
