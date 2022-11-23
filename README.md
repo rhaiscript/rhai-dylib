@@ -74,14 +74,3 @@ You also can implement a plugin using the Rust ABI, which is unstable and will c
 
 This means that all of the plugins that you will use in your main program need to be compiled with the **EXACT** same
 compiler version.
-
-## TODO
-
-Here is a list of stuff that we could implement or think about. (to move in issues)
-
-- [ ] How could we "restrain" the API access of the rhai engine ? Lock those behind features ? Using a new type that wraps the engine (Proxy) ?
-- [ ] Lock plugin loaders behind features.
-- [ ] Create macros that generate entry points.
-- [ ] Update seeds for ahash.
-- [ ] Add some unit & integration tests.
-- [ ] the "internals" feature is necessary for the impl of the module resolver. We should directly merge that into Rhai itself.
