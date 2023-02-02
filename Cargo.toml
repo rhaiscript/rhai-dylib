@@ -6,11 +6,11 @@ edition = "2021"
 resolver = "2"
 authors = ["Lucas Tabis", "Stephen Chung"]
 description = "Dylib support for Rhai"
-homepage = "https://rhai.rs"
-repository = "https://github.com/rhaiscript"
+homepage = "https://rhai.rs/rhaiscript/rhai-dylib"
+repository = "https://github.com/rhaiscript/rhai-dylib"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-documentation = "https://docs.rs/rhai-dylib/0.1.2/rhai_dylib/"
+documentation = "https://docs.rs/rhai-dylib/"
 include = ["/src/**/*", "/Cargo.toml", "/README.md", "LICENSE*"]
 keywords = [
     "scripting",
