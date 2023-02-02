@@ -48,11 +48,11 @@ There are multiple limitations with this implementation.
 
 Rust [`TypeId`](https://doc.rust-lang.org/std/any/struct.TypeId.html) is an object used to compare types at compile time. Rhai uses those to check which type a [`Dynamic`](https://docs.rs/rhai/1.10.1/rhai/struct.Dynamic.html) object is. This is a problem for dynamic libraries because `TypeIds` sometime change between compilations.
 
-That means that in certain situations, Rhai cannot compare two types, even tough they are the same, because the `TypeId` of said types is different between the plugin and the binary.
+That means that in certain situations, Rhai cannot compare two types, even though they are the same, because the `TypeId` of said types is different between the plugin and the binary.
 
 To fix this, you will need to compile your main binary **AND** plugins inside the **SAME** workspace, or compile everything **OUTSIDE** of a workspace. Compiling, for example, a binary in a workspace, and a plugin outside will probably result in `TypeIds` mismatch.
 
->  You can use
+> You can use
 > ```rust
 > println!("{:?}", std::any::TypeId::of::<rhai::Map>());
 > ```
@@ -65,8 +65,6 @@ If you have any idea of how the compiler generates those typeids between workspa
 Rhai uses the [`ahash`](https://github.com/tkaitchuck/ahash) crate under the hood to create identifiers for function calls. For each compilation of your code, a new seed is generated when hashing the types. Therefore, compiling your main program and your plugin different times will result in a hash mismatch, meaning that you won't be able to call the API of your plugin.
 
 To bypass that, you need to use the `rhai::config::hashing::set_ahash_seed` function with an array of four `u64`.
-
-Beware that the `rhai::config::hashing::set_ahash_seed` function is only available from the main branch of Rhai for the time being.
 
 ## Rust ABI
 
