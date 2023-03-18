@@ -1,7 +1,6 @@
 [package]
 name = "rhai-dylib"
 version = "0.1.6"
-rust-version = "1.61.0"
 edition = "2021"
 resolver = "2"
 authors = ["Lucas Tabis", "Stephen Chung"]
@@ -24,7 +23,7 @@ categories = ["embedded"]
 [dependencies]
 libloading = { version = "0.7.4", optional = true }
 
-rhai = { version = "1.12.0", features = [
+rhai = { version = "=1.13.0", features = [
     "internals", # Used to implement the ModuleResolver trait.
 ] }
 
