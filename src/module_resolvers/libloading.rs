@@ -34,21 +34,20 @@ impl Default for DylibModuleResolver {
 
 impl DylibModuleResolver {
     /// Create a new instance of the resolver.
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
 
     /// Enable/disable the cache.
-    #[inline(always)]
     pub fn enable_cache(&mut self, enable: bool) -> &mut Self {
         self.cache_enabled = enable;
         self
     }
 
     /// Is the cache enabled?
-    #[inline(always)]
     #[must_use]
-    pub fn is_cache_enabled(&self) -> bool {
+    pub const fn is_cache_enabled(&self) -> bool {
         self.cache_enabled
     }
 
@@ -103,6 +102,7 @@ impl DylibModuleResolver {
     }
 
     /// Resolve a module based on a path.
+    #[allow(clippy::needless_pass_by_value)]
     fn impl_resolve(
         &self,
         global: Option<&mut rhai::GlobalRuntimeState>,
@@ -121,14 +121,13 @@ impl DylibModuleResolver {
 
         if !path.exists() {
             return Err(Box::new(rhai::EvalAltResult::ErrorModuleNotFound(
-                path.to_str().map_or(String::default(), |s| s.to_string()),
+                path.to_str()
+                    .map_or_else(String::default, std::string::ToString::to_string),
                 position,
             )));
         }
 
-        if !self.is_cache_enabled() {
-            locked_write(&self.loader).load(path.as_path())
-        } else {
+        if self.is_cache_enabled() {
             let module = { locked_read(&self.cache).get(&path).cloned() };
 
             if let Some(module) = module {
@@ -139,6 +138,8 @@ impl DylibModuleResolver {
 
                 Ok(module)
             }
+        } else {
+            locked_write(&self.loader).load(path.as_path())
         }
     }
 }
@@ -158,6 +159,7 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         &self,
         _: &rhai::Engine,
         global: &mut rhai::GlobalRuntimeState,
+        _: &mut rhai::Scope,
         path: &str,
         position: rhai::Position,
     ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {

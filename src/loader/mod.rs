@@ -9,6 +9,7 @@ pub mod libloading;
 /// A trait to implement an object that loads Rhai modules.
 pub trait Loader {
     /// Load a module from a path and apply it to a [`rhai::Engine`].
+    #[allow(clippy::missing_errors_doc)]
     fn load(
         &mut self,
         path: impl AsRef<std::path::Path>,

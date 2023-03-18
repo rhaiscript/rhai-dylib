@@ -2,7 +2,6 @@
 #![deny(missing_docs)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
-#![warn(clippy::nursery)]
 #![warn(clippy::cargo)]
 
 #[cfg(not(target_os = "linux"))]

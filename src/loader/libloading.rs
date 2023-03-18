@@ -75,6 +75,7 @@ impl Default for Libloading {
 
 impl Libloading {
     /// Create a new instance of the loader.
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
@@ -82,8 +83,8 @@ impl Libloading {
 
 impl Loader for Libloading {
     /// Load a rhai module from a dynamic library.
-    fn load<'a>(
-        &'a mut self,
+    fn load(
+        &mut self,
         path: impl AsRef<std::path::Path>,
     ) -> Result<rhai::Shared<rhai::Module>, Box<rhai::EvalAltResult>> {
         let library = unsafe {
@@ -95,7 +96,7 @@ impl Loader for Libloading {
                     // Load library with `RTLD_NOW | RTLD_NODELETE` to fix SIGSEGV.
                     0x2 | 0x1000,
                 )
-                .map(|library| libloading::Library::from(library))
+                .map(libloading::Library::from)
             }
 
             #[cfg(target_os = "windows")]
@@ -107,7 +108,7 @@ impl Loader for Libloading {
             rhai::EvalAltResult::ErrorInModule(
                 path.as_ref()
                     .to_str()
-                    .map_or(String::default(), |s| s.to_string()),
+                    .map_or(String::default(), std::string::ToString::to_string),
                 error.to_string().into(),
                 rhai::Position::NONE,
             )
@@ -121,7 +122,7 @@ impl Loader for Libloading {
                 rhai::EvalAltResult::ErrorInModule(
                     path.as_ref()
                         .to_str()
-                        .map_or(String::default(), |s| s.to_string()),
+                        .map_or(String::default(), std::string::ToString::to_string),
                     error.to_string().into(),
                     rhai::Position::NONE,
                 )

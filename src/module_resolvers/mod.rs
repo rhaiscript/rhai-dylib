@@ -23,8 +23,10 @@ pub type LockGuard<'a, T> = std::sync::RwLockReadGuard<'a, T>;
 pub type LockGuardMut<'a, T> = std::sync::RwLockWriteGuard<'a, T>;
 
 /// Lock a [`Locked`] resource for mutable access.
-#[inline(always)]
-#[must_use]
+///
+/// # Panics
+///
+/// This function will return an error if the `RwLock` is poisoned.
 #[allow(dead_code)]
 pub fn locked_write<T>(value: &rhai::Locked<T>) -> LockGuardMut<T> {
     #[cfg(not(feature = "sync"))]
@@ -35,8 +37,10 @@ pub fn locked_write<T>(value: &rhai::Locked<T>) -> LockGuardMut<T> {
 }
 
 /// Lock a [`Locked`] resource for mutable access.
-#[inline(always)]
-#[must_use]
+///
+/// # Panics
+///
+/// This function will return an error if the `RwLock` is poisoned.
 #[allow(dead_code)]
 pub fn locked_read<T>(value: &rhai::Locked<T>) -> LockGuard<T> {
     #[cfg(not(feature = "sync"))]
