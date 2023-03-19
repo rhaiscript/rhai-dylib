@@ -99,7 +99,7 @@ impl Loader for Libloading {
                 .map(libloading::Library::from)
             }
 
-            #[cfg(target_os = "windows")]
+            #[cfg(any(target_os = "macos", target_os = "windows"))]
             {
                 libloading::Library::new(path.as_ref())
             }
