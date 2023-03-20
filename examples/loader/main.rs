@@ -1,6 +1,7 @@
 #[cfg(not(target_os = "linux"))]
+#[cfg(not(target_os = "macos"))]
 #[cfg(not(target_os = "windows"))]
-compile_error!("unsupported platform - only Linux & Windows are supported");
+compile_error!("unsupported platform - only Linux, macOS and Windows are supported");
 
 fn main() {
     let engine = build_engine();
@@ -43,6 +44,18 @@ pub fn build_engine() -> Engine {
                 "debug",
                 "examples",
                 "libdynamic_library.so",
+            ]))
+            .expect("failed to load plugin"),
+    );
+    #[cfg(target_os = "macos")]
+    engine.register_global_module(
+        loader
+            .load(std::path::PathBuf::from_iter([
+                env!("CARGO_MANIFEST_DIR"),
+                "target",
+                "debug",
+                "examples",
+                "libdynamic_library.dylib",
             ]))
             .expect("failed to load plugin"),
     );

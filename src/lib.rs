@@ -5,8 +5,9 @@
 #![warn(clippy::cargo)]
 
 #[cfg(not(target_os = "linux"))]
+#[cfg(not(target_os = "macos"))]
 #[cfg(not(target_os = "windows"))]
-compile_error!("unsupported platform - only Linux & Windows are supported");
+compile_error!("unsupported platform - only Linux, macOS and Windows are supported");
 
 /// Trait implementation to create objects that load plugins.
 pub mod loader;

@@ -6,6 +6,8 @@ use crate::loader::Loader;
 
 #[cfg(target_os = "linux")]
 const DYLIB_EXTENSION: &str = "so";
+#[cfg(target_os = "macos")]
+const DYLIB_EXTENSION: &str = "dylib";
 #[cfg(target_os = "windows")]
 const DYLIB_EXTENSION: &str = "dll";
 
