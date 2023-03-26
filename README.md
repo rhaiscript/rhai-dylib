@@ -66,6 +66,17 @@ Rhai uses the [`ahash`](https://github.com/tkaitchuck/ahash) crate under the hoo
 
 To bypass that, you need to use the `rhai::config::hashing::set_ahash_seed` function with an array of four `u64`.
 
+### Others
+
+If your plugin is still not working after you read the sections above, you could check those points too:
+
+- Use the same toolchain version for all crates.
+- Use the same rhai-dylib dependency version in all crates.
+- Try to build the crates with the same target type. (both debug or both release)
+- Enable/Disable link time optimization flag (-C lto) for all crates.
+
+If none of those solutions works, do not hesitate to open an issue !
+
 ## Rust ABI
 
 You also can implement a plugin using the Rust ABI, which is unstable and will change between compiler versions.
