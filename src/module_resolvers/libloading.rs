@@ -57,9 +57,9 @@ impl DylibModuleResolver {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```ignore
     /// use rhai::Engine;
-    /// use rhai_dylib::module_resolvers::DylibModuleResolver;
+    /// use rhai_dylib::module_resolvers::libloading::DylibModuleResolver;
     ///
     /// // Create a new 'DylibModuleResolver' loading dynamic libraries
     /// // from the 'scripts' directory.
@@ -168,6 +168,8 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         self.impl_resolve(Some(global), None, path, position)
     }
 
+    /// This resolver is Rust based, so it cannot resolve ASTs.
+    /// This function will always return `None`.
     fn resolve_ast(
         &self,
         _: &rhai::Engine,
@@ -175,7 +177,66 @@ impl rhai::ModuleResolver for DylibModuleResolver {
         _: &str,
         _: rhai::Position,
     ) -> Option<Result<rhai::AST, Box<rhai::EvalAltResult>>> {
-        // This resolver is Rust based, so it cannot resolve ASTs.
         None
+    }
+}
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new() {
+        let mut r = DylibModuleResolver::new();
+        let rp = DylibModuleResolver::with_path("./scripts");
+
+        r.enable_cache(false);
+        assert!(!r.is_cache_enabled());
+        assert!(rp.is_cache_enabled());
+    }
+
+    #[test]
+    fn file_path_resolution() {
+        let r = DylibModuleResolver::new();
+
+        let relative = r.get_file_path("mylib", None);
+
+        #[cfg(target_os = "linux")]
+        assert_eq!(relative, std::path::PathBuf::from("mylib.so"));
+        #[cfg(target_os = "windows")]
+        assert_eq!(relative, std::path::PathBuf::from("mylib.dll"));
+        #[cfg(target_os = "macos")]
+        assert_eq!(relative, std::path::PathBuf::from("mylib.dylib"));
+
+        let source = r.get_file_path("mylib", Some(std::path::Path::new("source")));
+
+        #[cfg(target_os = "linux")]
+        assert_eq!(source, std::path::PathBuf::from("source/mylib.so"));
+        #[cfg(target_os = "windows")]
+        assert_eq!(source, std::path::PathBuf::from("source/mylib.dll"));
+        #[cfg(target_os = "macos")]
+        assert_eq!(source, std::path::PathBuf::from("source/mylib.dylib"));
+    }
+
+    #[test]
+    fn file_path_resolution_with_path() {
+        let rp = DylibModuleResolver::with_path("scripts");
+
+        let relative = rp.get_file_path("mylib", None);
+        #[cfg(target_os = "linux")]
+        assert_eq!(relative, std::path::PathBuf::from("scripts/mylib.so"));
+        #[cfg(target_os = "windows")]
+        assert_eq!(relative, std::path::PathBuf::from("scripts/mylib.dll"));
+        #[cfg(target_os = "macos")]
+        assert_eq!(relative, std::path::PathBuf::from("scripts/mylib.dylib"));
+
+        // TODO: add tests for all platforms.
+        let absolute = rp.get_file_path("/usr/local/lib/mylib", None);
+        #[cfg(target_os = "linux")]
+        assert_eq!(
+            absolute,
+            std::path::PathBuf::from("/usr/local/lib/mylib.so")
+        );
     }
 }

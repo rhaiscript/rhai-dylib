@@ -9,6 +9,7 @@
     "github",
     "libloading",
     "linux",
+    "mylib",
     "rhai",
     "Rhai"
   ]
