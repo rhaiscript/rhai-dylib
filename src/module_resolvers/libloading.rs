@@ -200,21 +200,40 @@ mod tests {
     fn file_path_resolution() {
         let r = DylibModuleResolver::new();
 
-        let relative = r.get_file_path("./mylib", None);
-        assert_eq!(relative, std::path::PathBuf::from("./mylib.so"));
+        let relative = r.get_file_path("mylib", None);
 
-        let relative = r.get_file_path("./mylib", Some(std::path::Path::new("./source")));
-        assert_eq!(relative, std::path::PathBuf::from("./source/mylib.so"));
+        #[cfg(target_os = "linux")]
+        assert_eq!(relative, std::path::PathBuf::from("mylib.so"));
+        #[cfg(target_os = "windows")]
+        assert_eq!(relative, std::path::PathBuf::from("mylib.dll"));
+        #[cfg(target_os = "macos")]
+        assert_eq!(relative, std::path::PathBuf::from("mylib.dylib"));
+
+        let source = r.get_file_path("mylib", Some(std::path::Path::new("source")));
+
+        #[cfg(target_os = "linux")]
+        assert_eq!(source, std::path::PathBuf::from("source/mylib.so"));
+        #[cfg(target_os = "windows")]
+        assert_eq!(source, std::path::PathBuf::from("source/mylib.dll"));
+        #[cfg(target_os = "macos")]
+        assert_eq!(source, std::path::PathBuf::from("source/mylib.dylib"));
     }
 
     #[test]
     fn file_path_resolution_with_path() {
-        let rp = DylibModuleResolver::with_path("./scripts");
+        let rp = DylibModuleResolver::with_path("scripts");
 
-        let relative = rp.get_file_path("./mylib", None);
-        assert_eq!(relative, std::path::PathBuf::from("./scripts/mylib.so"));
+        let relative = rp.get_file_path("mylib", None);
+        #[cfg(target_os = "linux")]
+        assert_eq!(relative, std::path::PathBuf::from("scripts/mylib.so"));
+        #[cfg(target_os = "windows")]
+        assert_eq!(relative, std::path::PathBuf::from("scripts/mylib.dll"));
+        #[cfg(target_os = "macos")]
+        assert_eq!(relative, std::path::PathBuf::from("scripts/mylib.dylib"));
 
+        // TODO: add tests for all platforms.
         let absolute = rp.get_file_path("/usr/local/lib/mylib", None);
+        #[cfg(target_os = "linux")]
         assert_eq!(
             absolute,
             std::path::PathBuf::from("/usr/local/lib/mylib.so")
