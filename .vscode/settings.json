@@ -1,8 +1,12 @@
 {
   "cSpell.words": [
     "ahash",
+    "clippy",
     "ctypes",
+    "Dclippy",
+    "dtolnay",
     "dylib",
+    "github",
     "libloading",
     "linux",
     "rhai",
