@@ -57,9 +57,9 @@ impl DylibModuleResolver {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```ignore
     /// use rhai::Engine;
-    /// use rhai_dylib::module_resolvers::DylibModuleResolver;
+    /// use rhai_dylib::module_resolvers::libloading::DylibModuleResolver;
     ///
     /// // Create a new 'DylibModuleResolver' loading dynamic libraries
     /// // from the 'scripts' directory.

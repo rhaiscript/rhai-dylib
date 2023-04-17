@@ -16,8 +16,8 @@ Check the `simple` example for more details.
 
 This crate also expose a [Rhai Module Resolver](https://rhai.rs/book/rust/modules/resolvers.html) that loads dynamic libraries at the given path.
 
-```rust
-use rhai_dylib::DylibModuleResolver;
+```rust,ignore
+use rhai_dylib::module_resolvers::libloading::DylibModuleResolver;
 
 let mut engine = rhai::Engine::new();
 
@@ -53,7 +53,7 @@ That means that in certain situations, Rhai cannot compare two types, even thoug
 To fix this, you will need to compile your main binary **AND** plugins inside the **SAME** workspace, or compile everything **OUTSIDE** of a workspace. Compiling, for example, a binary in a workspace, and a plugin outside will probably result in `TypeIds` mismatch.
 
 > You can use
-> ```rust
+> ```rust,ignore
 > println!("{:?}", std::any::TypeId::of::<rhai::Map>());
 > ```
 > In your binary & plugins to check the type id value.

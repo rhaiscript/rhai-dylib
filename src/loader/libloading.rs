@@ -5,7 +5,7 @@
 //! You need to declare the entrypoint function of your module, following the [`Entrypoint`] prototype.
 //! The name of the function must be the same as [`MODULE_ENTRYPOINT`].
 //!
-//! ```rust
+//! ```rust,ignore
 //! fn module_entrypoint() -> rhai::Shared<rhai::Module> {
 //!     // ...
 //! }
@@ -13,9 +13,11 @@
 //!
 //! You can easily, for example, implement and export your module using Rhai's [plugin modules](https://rhai.rs/book/plugins/module.html).
 //!
-//! ```rust
+//! ```rust,ignore
+//! use rhai::plugin::*;
+//!
 //! // Use the `export_module` macro to generate your api.
-//! #[rhai::export_module]
+//! #[export_module]
 //! mod my_api {
 //!     pub fn get_num() -> i64 {
 //!         3
@@ -45,9 +47,9 @@ pub const MODULE_ENTRYPOINT: &str = "module_entrypoint";
 ///
 /// # Example
 ///
-/// ```rust
+/// ```rust,ignore
 /// // Create your dynamic library loader & rhai engine.
-/// let mut loader = Libloading::new();
+/// let mut loader = rhai_dylib::loader::libloading::Libloading::new();
 /// let mut engine = rhai::Engine::new();
 ///
 /// // `my_first_module` library exposes the `print_first` function.
