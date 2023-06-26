@@ -1,6 +1,6 @@
 [package]
 name = "rhai-dylib"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 resolver = "2"
 authors = ["Lucas Tabis", "Stephen Chung"]
