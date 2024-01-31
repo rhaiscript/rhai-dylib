@@ -1,5 +1,5 @@
 use rhai_dylib::rhai::plugin::{
-    mem, Dynamic, FnAccess, FnNamespace, ImmutableString, NativeCallContext, PluginFunction,
+    mem, Dynamic, FnNamespace, FuncRegistration, ImmutableString, NativeCallContext, PluginFunc,
     RhaiResult, TypeId,
 };
 

@@ -1,8 +1,8 @@
-use rhai_dylib::rhai::{config::hashing::set_ahash_seed, ImmutableString};
+use rhai_dylib::rhai::{config::hashing::set_hashing_seed, ImmutableString};
 use rhai_dylib::{module_resolvers::libloading::DylibModuleResolver, rhai};
 
 fn main() {
-    if let Err(value) = set_ahash_seed(Some([1, 2, 3, 4])) {
+    if let Err(value) = set_hashing_seed(Some([1, 2, 3, 4])) {
         panic!("ahash seed has been overridden by a plugin: {value:?}");
     }
 
