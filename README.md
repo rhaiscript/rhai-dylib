@@ -42,7 +42,7 @@ There are multiple limitations with this implementation.
 > TL;DR
 > To use this crate, you need to:
 > - Compile **EVERYTHING**, plugins and program that will load them, inside the **SAME** workspace or **WITHOUT** a workspace.
-> - Use the `rhai::config::hashing::set_ahash_seed` function with the **SAME** four u64 array when building your plugins and the program that will load them. (i.e. `rhai::config::hashing::set_ahash_seed(Some([1, 2, 3, 4]))`)
+> - Use the `rhai::config::hashing::set_hashing_seed` function with the **SAME** four u64 array when building your plugins and the program that will load them. (i.e. `rhai::config::hashing::set_hashing_seed(Some([1, 2, 3, 4]))`)
 
 ### TypeId
 
@@ -64,7 +64,7 @@ If you have any idea of how the compiler generates those typeids between workspa
 
 Rhai uses the [`ahash`](https://github.com/tkaitchuck/ahash) crate under the hood to create identifiers for function calls. For each compilation of your code, a new seed is generated when hashing the types. Therefore, compiling your main program and your plugin different times will result in a hash mismatch, meaning that you won't be able to call the API of your plugin.
 
-To bypass that, you need to use the `rhai::config::hashing::set_ahash_seed` function with an array of four `u64`.
+To bypass that, you need to use the `rhai::config::hashing::set_hashing_seed` function with an array of four `u64`.
 
 ### Others
 
