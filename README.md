@@ -1,8 +1,7 @@
 # Rhai Dylib
 
 This crate exposes a simple API to load `dylib` Rust crates in a [Rhai](https://rhai.rs/) engine using [Rhai modules](https://rhai.rs/book/rust/modules/index.html).
-
-> 🚧 This is a work in progress, the API is subject to change. Please do make recommendations on what you want it to be via issues, discussions or pull requests !
+You can generate your own library project for [Rhai](https://rhai.rs/) using [`cargo-generate`](https://github.com/cargo-generate/cargo-generate) with [`this template`](https://github.com/ltabis/rhai-dylib-template).
 
 ## Loader
 
