@@ -9,8 +9,6 @@ You can generate your own library project for [Rhai](https://rhai.rs/) using [`c
 
 Check the `simple` example for more details.
 
-> You can easily setup a dynamic library for Rhai by using [cargo-generate](https://github.com/cargo-generate/cargo-generate) and the [rhai-dylib-template](https://github.com/ltabis/rhai-dylib-template).
-
 ## Module Resolver
 
 This crate also expose a [Rhai Module Resolver](https://rhai.rs/book/rust/modules/resolvers.html) that loads dynamic libraries at the given path.
