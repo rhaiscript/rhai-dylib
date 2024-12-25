@@ -23,7 +23,7 @@ categories = ["embedded"]
 [dependencies]
 libloading = { version = "0.8.5", optional = true }
 
-rhai = { version = "1.19.0", features = [
+rhai = { version = "1.20.1", features = [
     "internals", # Used to implement the ModuleResolver trait.
 ] }
 
