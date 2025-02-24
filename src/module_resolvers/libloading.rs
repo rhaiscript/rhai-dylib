@@ -1,5 +1,3 @@
-//!
-
 use super::{locked_read, locked_write};
 use crate::loader::libloading::Libloading;
 use crate::loader::Loader;
@@ -182,7 +180,6 @@ impl rhai::ModuleResolver for DylibModuleResolver {
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
 

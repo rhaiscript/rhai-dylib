@@ -1,3 +1,4 @@
+/// Libloading module resolver
 #[cfg(feature = "libloading")]
 pub mod libloading;
 
