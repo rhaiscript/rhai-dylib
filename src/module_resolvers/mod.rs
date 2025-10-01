@@ -29,7 +29,7 @@ pub type LockGuardMut<'a, T> = std::sync::RwLockWriteGuard<'a, T>;
 ///
 /// This function will return an error if the `RwLock` is poisoned.
 #[allow(dead_code)]
-pub fn locked_write<T>(value: &rhai::Locked<T>) -> LockGuardMut<T> {
+pub fn locked_write<T>(value: &'_ rhai::Locked<T>) -> LockGuardMut<'_, T> {
     #[cfg(not(feature = "sync"))]
     return value.borrow_mut();
 
@@ -43,7 +43,7 @@ pub fn locked_write<T>(value: &rhai::Locked<T>) -> LockGuardMut<T> {
 ///
 /// This function will return an error if the `RwLock` is poisoned.
 #[allow(dead_code)]
-pub fn locked_read<T>(value: &rhai::Locked<T>) -> LockGuard<T> {
+pub fn locked_read<T>(value: &'_ rhai::Locked<T>) -> LockGuard<'_, T> {
     #[cfg(not(feature = "sync"))]
     return value.borrow();
 

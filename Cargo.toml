@@ -21,9 +21,9 @@ keywords = [
 categories = ["embedded"]
 
 [dependencies]
-libloading = { version = "0.8.8", optional = true }
+libloading = { version = "0.8.9", optional = true }
 
-rhai = { version = "1.22.2", features = [
+rhai = { version = "1.23.4", features = [
     "internals", # Used to implement the ModuleResolver trait.
 ] }
 
