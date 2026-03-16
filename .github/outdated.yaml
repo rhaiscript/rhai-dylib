@@ -1,0 +1,20 @@
+name: Outdated
+
+on:
+  schedule: [cron: "00 7 * * *"]
+
+permissions:
+  contents: read
+
+jobs:
+  outdated:
+    name: Check for outdated dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install and run cargo outdated
+        run: |
+          cargo install --locked cargo-outdated
+          cargo outdated --depth=1 --exit-code 1
