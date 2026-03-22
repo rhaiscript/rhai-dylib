@@ -2,6 +2,7 @@ name: checks
 
 "on":
   pull_request:
+  schedule: [cron: "00 7 * * *"]
 
 permissions:
   contents: read
