@@ -4,6 +4,7 @@
 [![docs.rs](https://img.shields.io/docsrs/rhai-dylib)](https://docs.rs/rhai-dylib)
 [![License](https://img.shields.io/crates/l/rhai-dylib)](https://github.com/rhaiscript/rhai-dylib/blob/main/LICENSE-MIT)
 [![CI](https://github.com/rhaiscript/rhai-dylib/actions/workflows/checks.yml/badge.svg)](https://github.com/rhaiscript/rhai-dylib/actions/workflows/checks.yml)
+[![codecov](https://codecov.io/gh/rhaiscript/rhai-dylib/branch/main/graph/badge.svg)](https://codecov.io/gh/rhaiscript/rhai-dylib)
 
 This crate exposes a simple API to load `dylib` Rust crates in a [Rhai](https://rhai.rs/) engine using [Rhai modules](https://rhai.rs/book/rust/modules/index.html).
 You can generate your own library project for [Rhai](https://rhai.rs/) using [`cargo-generate`](https://github.com/cargo-generate/cargo-generate) with [`this template`](https://github.com/ltabis/rhai-dylib-template).

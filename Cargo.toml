@@ -35,6 +35,12 @@ libloading = [
     "dep:libloading",
 ] # enable module resolver & plugin loader using the libloading crate.
 
+# Used to test a real dynamic library in unit tests.
+[[example]]
+name = "test_plugin"
+crate-type = ["cdylib"]
+path = "tests/fixtures/plugin/lib.rs"
+
 [[example]]
 name = "dynamic_library"
 crate-type = ["cdylib"]

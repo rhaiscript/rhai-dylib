@@ -50,3 +50,16 @@ pub fn locked_read<T>(value: &'_ rhai::Locked<T>) -> LockGuard<'_, T> {
     #[cfg(feature = "sync")]
     return value.read().unwrap();
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn locked_write_and_read() {
+        let value = rhai::Locked::new(0i32);
+
+        *locked_write(&value) = 42;
+        assert_eq!(*locked_read(&value), 42);
+    }
+}

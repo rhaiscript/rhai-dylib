@@ -133,3 +133,56 @@ impl Loader for Libloading {
         Ok(module_entrypoint())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::loader::Loader;
+
+    fn build_test_plugin() -> &'static std::path::PathBuf {
+        // Prevents multiple threads writing to the dll on windows and triggering a STATUS_ACCESS_VIOLATION error.
+        static PATH: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+        PATH.get_or_init(|| {
+            let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+            let status = std::process::Command::new("cargo")
+                .args(["build", "--example", "test_plugin"])
+                .current_dir(manifest_dir)
+                .status()
+                .expect("failed to execute cargo build");
+
+            assert!(status.success(), "building test_plugin failed");
+
+            let target_dir = std::env::var("CARGO_TARGET_DIR")
+                .map(std::path::PathBuf::from)
+                .unwrap_or_else(|_| manifest_dir.join("target"));
+
+            #[cfg(target_os = "linux")]
+            return target_dir.join("debug/examples/libtest_plugin.so");
+            #[cfg(target_os = "macos")]
+            return target_dir.join("debug/examples/libtest_plugin.dylib");
+            #[cfg(target_os = "windows")]
+            return target_dir.join("debug/examples/test_plugin.dll");
+        })
+    }
+
+    #[test]
+    fn new() {
+        let _ = Libloading::new();
+    }
+
+    #[test]
+    fn load_success() {
+        let mut loader = Libloading::new();
+        loader
+            .load(build_test_plugin().as_path())
+            .expect("failed to load test_plugin");
+    }
+
+    #[test]
+    fn load_nonexistent_returns_error() {
+        let mut loader = Libloading::new();
+        let err = loader.load("nonexistent.so").unwrap_err();
+
+        assert!(matches!(*err, rhai::EvalAltResult::ErrorInModule(..)));
+    }
+}
