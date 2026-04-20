@@ -13,12 +13,12 @@ const DYLIB_EXTENSION: &str = "dll";
 pub struct DylibModuleResolver {
     /// Path prepended for each import if specified.
     base_path: Option<std::path::PathBuf>,
-    /// Dynamic library loader.
-    loader: rhai::Locked<Libloading>,
     /// Is module caching enabled for this resolver.
     cache_enabled: bool,
     /// Cache of loaded modules, empty if [`Self::cache_enabled`] is false.
     cache: rhai::Locked<std::collections::BTreeMap<std::path::PathBuf, rhai::Shared<rhai::Module>>>,
+    /// Dynamic library loader.
+    loader: rhai::Locked<Libloading>,
 }
 
 impl Default for DylibModuleResolver {
@@ -182,6 +182,41 @@ impl rhai::ModuleResolver for DylibModuleResolver {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rhai::ModuleResolver;
+
+    fn build_test_plugin() -> &'static std::path::PathBuf {
+        // Prevents multiple threads writing to the dll on windows and triggering a STATUS_ACCESS_VIOLATION error.
+        static PATH: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+        PATH.get_or_init(|| {
+            let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+            let status = std::process::Command::new("cargo")
+                .args(["build", "--example", "test_plugin"])
+                .current_dir(manifest_dir)
+                .status()
+                .expect("failed to execute cargo build");
+
+            assert!(status.success(), "building test_plugin failed");
+
+            let target_dir = std::env::var("CARGO_TARGET_DIR")
+                .map(std::path::PathBuf::from)
+                .unwrap_or_else(|_| manifest_dir.join("target"));
+
+            #[cfg(target_os = "linux")]
+            return target_dir.join("debug/examples/libtest_plugin.so");
+            #[cfg(target_os = "macos")]
+            return target_dir.join("debug/examples/libtest_plugin.dylib");
+            #[cfg(target_os = "windows")]
+            return target_dir.join("debug/examples/test_plugin.dll");
+        })
+    }
+
+    fn test_plugin_module_path() -> String {
+        build_test_plugin()
+            .with_extension("")
+            .to_str()
+            .unwrap()
+            .replace('\\', "/")
+    }
 
     #[test]
     fn new() {
@@ -235,5 +270,77 @@ mod tests {
             absolute,
             std::path::PathBuf::from("/usr/local/lib/mylib.so")
         );
+    }
+
+    #[test]
+    fn resolve_ast_returns_none() {
+        let r = DylibModuleResolver::new();
+        let engine = rhai::Engine::new();
+        assert!(r
+            .resolve_ast(&engine, None, "anything", rhai::Position::NONE)
+            .is_none());
+    }
+
+    #[test]
+    fn resolve_returns_error_for_missing_file() {
+        let r = DylibModuleResolver::new();
+        let engine = rhai::Engine::new();
+        assert!(r
+            .resolve(&engine, None, "nonexistent_module", rhai::Position::NONE)
+            .is_err());
+    }
+
+    #[test]
+    fn resolve_loads_module() {
+        let module_path = test_plugin_module_path();
+        let r = DylibModuleResolver::new();
+        let engine = rhai::Engine::new();
+        let module = r
+            .resolve(&engine, None, &module_path, rhai::Position::NONE)
+            .expect("failed to resolve module");
+        assert!(!module.is_empty());
+    }
+
+    #[test]
+    fn resolve_cache_hit_returns_same_module() {
+        let module_path = test_plugin_module_path();
+        let r = DylibModuleResolver::new();
+        let engine = rhai::Engine::new();
+        let m1 = r
+            .resolve(&engine, None, &module_path, rhai::Position::NONE)
+            .expect("first resolve failed");
+        let m2 = r
+            .resolve(&engine, None, &module_path, rhai::Position::NONE)
+            .expect("second resolve failed");
+
+        assert!(std::ptr::eq(&*m1, &*m2));
+    }
+
+    #[test]
+    fn resolve_without_cache() {
+        let module_path = test_plugin_module_path();
+        let mut r = DylibModuleResolver::new();
+
+        r.enable_cache(false);
+
+        let engine = rhai::Engine::new();
+
+        r.resolve(&engine, None, &module_path, rhai::Position::NONE)
+            .expect("resolve without cache failed");
+    }
+
+    #[test]
+    fn resolve_raw_via_engine_import() {
+        let module_path = test_plugin_module_path();
+        let _ = rhai::config::hashing::set_hashing_seed(Some([1, 2, 3, 4]));
+        let mut engine = rhai::Engine::new();
+
+        engine.set_module_resolver(DylibModuleResolver::new());
+
+        let result = engine
+            .eval::<rhai::INT>(&format!(r#"import "{module_path}" as p; p::add(1, 2)"#))
+            .expect("engine eval failed");
+
+        assert_eq!(result, 3);
     }
 }
