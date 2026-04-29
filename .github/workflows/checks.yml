@@ -1,6 +1,9 @@
 name: checks
 
 "on":
+  push:
+    branches:
+      - main
   pull_request:
   schedule: [cron: "00 7 * * *"]
 
