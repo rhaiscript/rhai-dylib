@@ -1,9 +1,4 @@
-use rhai_dylib::rhai::plugin::{
-    mem, Dynamic, FnNamespace, FuncRegistration, ImmutableString, NativeCallContext, PluginFunc,
-    RhaiResult, TypeId,
-};
-
-use rhai_dylib::rhai::{Map, Module, INT};
+use rhai_dylib::rhai::{Map, INT};
 
 #[derive(Clone)]
 pub struct MyPluginObjectInner {
